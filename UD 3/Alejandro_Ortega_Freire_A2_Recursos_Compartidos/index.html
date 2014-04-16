@@ -1,0 +1,540 @@
+<!--
+  AUTOR: Alejandro Ortega Freire
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 19/02/2014
+  ACTIVIDAD:  A2: Recursos compartidos
+-->
+
+<html>
+	<head>
+		<title>A2: Recursos compartidos</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+		<style type="text/css">
+			img {border: 1px solid black;}
+			img.icon {border: none;}
+		</style>
+	</head>
+	<body>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img class='icon' src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A2: Recursos compartidos</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>19 de febrero de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#1.1'>1.1- Configuración</a> | <a href='#1.2'>1.2.- Preparativos Samba</a> | <a href='#1.3'>1.3.- Configurar Samba</a> | <a href='#1.4'>1.4.- Cliente Windows GUI</a> | <a href='#1.5'>1.5.- Cliente Windows comandos</a> | <a href='#1.6'>1.6.- Cliente GNU/Linux GUI</a> | <a href='#1.7'>1.7.- Cliente GNU/Linux comandos</a> | <a href='#1.8'>1.8.- Preguntas</a>  
+		</div>
+	<h1><a id='bloque1'>1.- Sistema Operativo GNU/Linux</a></h1>
+	<h3 id='1.1'>1.1.- Configurar el equipo con las siguientes características:</h3>
+	<ul>
+		<li><b>SO:</b> Debian 7.1.0</li>
+		<li><b>IP:</b> 172.16.108.2XX (donde XX corresponde al nº de cada puesto, 05 en este caso)</li>
+		<li><b>Máscara de red:</b> 255.255.0.0</li>
+		<li><b>Gateway:</b> 172.16.1.1</li>
+		<li><b>Servidor DNS:</b> 172.16.1.1</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 1:</b> Para configurar las características del equipo es necesario modificar los archivos <b>/etc/network/interfaces</b> y <b>/etc/resolv.conf</b>. Para ello se siguieron los siguientes pasos: 
+	</div>
+	<ol type='I'>
+		<li>Hacer una copia de los archivos originales.</li>
+			<ul type='square'>
+				<li><b>cp /etc/network/interfaces /etc/network/interfaces_original</b></li>
+				<li><b>cp /etc/resolv.conf /etc/resolv.conf_original</b></li>
+			</ul>
+		<br/>
+		<li>Con la aplicación <b>nano</b> modificar los archivos de la siguiente manera:</li>
+		<br/>
+		<center>
+			<img src='./files/debianwindows/interfacesoriginal.png' width='45%'/>
+			<img src='./files/debianwindows/configurarip.png' width='45%'/><br/>
+			<p><i><b>Imágenes 1 y 2:</b> Archivo interfaces original (izquierda) y después de modificar (derecha).</i></p>
+			<img src='./files/debianwindows/servidorDNS.png'/><br/>
+			<p><i><b>Imagen 3:</b> Resultado de la modificación del archivo resolv.conf indicando el servidor DNS (nameserver).</i></p>
+		</center>
+		<li>Comprobación de las modificaciones.</li>
+			<ul type='square'>
+				<li><b>ifconfig</b></li>
+			</ul>
+		<br/>
+		<center>
+			<img src='./files/debianwindows/configurarred.png' width='55%'/><br/>
+			<p><i><b>Imagen 4:</b> Resultado del comando ifconfig.</i></p>
+		</center>
+	</ol>
+	<ul>
+		<li><b>Nombre de equipo:</b> primer-apellido-del-alumno (ortega, en este caso)</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/nombreequipo.png'/><br/>
+		<p><i><b>Imagen 5:</b> Nombre del equipo mostrado al inicio de la sesión.</i></p>
+	</center>
+	<ul>
+		<li><b>Tarjeta de red VBox:</b> modo puente.</li>
+		<li>Instalar <b>openssh-server</b> (para ello se utilizó el Gestor de paquetes <b>Synaptic</b>).</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/instalaropenssh.png' width='55%'/><br/>
+		<p><i><b>Imagen 6:</b> Instalación de openssh-server.</i></p>
+	</center>
+	<br/>
+	<hr id='1.2' size='3px' noshade='noshade'/>
+	<a href='#indice'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#indice'>Principio del Punto 1.1</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.3'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.3'>Fin del punto 1.2</a> 
+	<h3>1.2.- Preparativos Servidor Samba</h3>
+	<ul>
+		<li><b>Crear los siguientes grupos y usuarios</b>
+			<ul type='square'>
+				<li>Grupo informáticos con los usuarios info1, info2 y supersamba.</li>
+				<li>Grupo panderos con los usuarios pan1, pan2 y supersamba.</li>
+				<li>Crear el usuario smbguest.</li>
+				<li>Crear el grupo usuariosamba y dentro poner a todos los usuarios de panaderos, informáticos, supersamba y smbguest.</li>
+			</ul>
+		</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 2:</b> 
+		Los comandos usados para crear los usuarios y grupos fueron los siguientes: 
+		<ul>
+			<li><b>groupadd nombre-grupo</b>: crea un nuevo grupo.</li> 
+			<li><b>useradd -g nombre-grupo-propietario -m nombre-usuario</b>: crea un nuevo usuario.</li> 
+				<ul style='square'>
+					<li><b>Parámetros:</b>
+						<ul style=list-style:none;>
+							<li><b>g:</b> establece el grupo principal del usuario.</li>
+							<li><b>m:</b> crea la carpeta home si es que no existe.</li>				
+						</ul>
+					</li>
+				</ul>
+			<li><b>adduser nombre-usuario nombre-grupo</b>: añade un usuario a un grupo ya existente.</li> 
+		</ul>
+	</div>
+	<br/>
+	<center>
+		<img src='./files/debianwindows/creargruposyusuarios.png'/><br/>
+		<p><i><b>Imagen 7:</b> Creación de grupos y usuarios.</i></p>
+		<img src='./files/debianwindows/comprobacionusuarios.png' width='45%'/>
+		<img src='./files/debianwindows/gruposyusuarios.png' width='45%'/><br/>
+		<p><i><b>Imágenes 8 y 9:</b> Comprobación de la creación de usuarios y grupos a través de la apertura de los ficheros <b>/etc/passwd</b> y <b>/etc/group</b>, respectivamente.</i></p>
+	</center>
+	
+	<ul>
+		<li>Impedir que nadie pueda usar el usuario <b>smbguest</b> para entrar en la máquina mediante login. Para ello es necesario modificar el fichero <b>/etc/passwd</b> de la siguiente manera:</li>
+		<br/>
+		smbguest:x:1001:1001:,,,:/home/smbguest:<b>/bin/false</b>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/smbguest1.png' width='45%'/>
+		<img src='./files/debianwindows/smbguestnoinicio.png' width='45%'/><br/>
+		<p><i><b>Imágenes 10 y 11:</b> Archivo <b>/etc/passwd</b> original (izquierda) y modificación (derecha).</i></p>
+	</center>
+	<br/>
+	<hr id='1.3' size='3px' noshade='noshade'/>
+	<a href='#1.2'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.2'>Principio del Punto 1.2</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.4'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.4'>Fin del punto 1.3</a> 
+	<h3>1.3.- Instalar y configurar Samba</h3>
+	<ul>
+		<li>Instalar el servidor <b>Samba</b> en Linux. Para ello hizo falta añadir nuevos repositorios en el fichero <b>/etc/apt/sources.list</b>, además de ser necesario hacer una actualización (<b>upgrade</b>) de los paquetes ya instalados dado que daba un error indicando que había varios mal instalados previamente.</li>
+	</ul>
+	<br/>
+	<center>
+		<img src='./files/debianwindows/repositorios.png'/><br/>
+		<p><i><b>Imagen 12:</b> Añadir repositorios a la lista en <b>/etc/apt/sources.list</b>.</i></p>
+		<img src='./files/debianwindows/repositorios2.png' width='45%'/>
+		<img src='./files/debianwindows/repositorios3.png' width='45%'/><br/>
+		<p><i><b>Imágenes 13 y 14:</b> Actualizar los paquetes instalados (<b>apt-get upgrade</b>) y los repositorios (<b>apt-get update</b>).</i></p>
+	</center>
+	<ul>
+		<li>Instalar el servidor <b>Samba</b>:</li>
+		apt-get -y samba samba-common smbclient samba-doc cifs-utils
+	</ul>
+	<br/>
+	<center>
+		<img src='./files/debianwindows/instalarsamba1.png'width='60%'/><br/><br/>
+		<img src='./files/debianwindows/instalarsamba2.png'width='60%'/><br/>
+		<p><i><b>Imagen 15:</b> Instalar servidor Samba.</i></p>
+	</center>
+	<ul>
+		<li><b>Configurar el servidor Samba:</b>
+			<ul type='square'>
+				<li>Renombrar el fichero de configuración existente y trabajar a partir de un fichero de configuración nuevo vacío:
+					<ul style=list-style:none;>
+						<li><b>mv /etc/samba/smb.conf /etc/samba/smb.conf.000</b>: renombra el archivo de configuración de Samba original (<b>smb.conf</b>) como <b>smb.conf.000</b>.</li>
+						<li><b>touch /etc/samba/smb.conf</b>: crea el archivo <b>smb.conf</b> vacío en la dirección <b>/etc/samba/</b>.</li>					
+					</ul>
+				</li>
+				<br/>
+				<center>
+					<img src='./files/debianwindows/renombrarcrearsambaconf.png'/><br/>
+					<p><i><b>Imagen 16:</b> Renombrar y crear nuevo archivo smb.conf.</i></p>
+				</center>		
+				<li>En el fichero vacío <b>/etc/samba/smb.conf</b>, rellenarlo con el contenido siguiente:</li>
+					<pre>[global]
+netbios name = PRIMER-APELLIDO-ALUMNO (ORTEGA_DEBIAN, en este caso)
+workgroup = AULA108
+server string = Servidor Samba del PC 05
+security = user
+map to guest = bad user
+guest account = smbguest
+
+[cdrom]
+path = /dev/cdrom
+guest ok = yes
+read only = yes
+
+[public]
+path = /var/samba/public
+guest ok = yes
+read only = yes
+
+[panaderos]
+path = /var/samba/panaderos
+read only = no
+valid users = @panaderos, @informaticos
+
+[informaticos]
+path = /var/samba/informaticos
+read only = no
+valid users = info1, info2</pre>
+			</ul>
+		</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/sambasmb.png'/><br/>
+		<p><i><b>Imagen 17:</b> Rellenar el archivo smb.conf.</i></p>
+	</center>
+	<ul>
+		<li><b>Crear los recursos compartidos:</b>
+		Se crean las carpetas de los recursos compartidos con los permisos siguientes:
+			<ul type='square'>
+				<li><b>/var/samba/public</b>: usuario propietario "supersamba", grupo propietario "usuariosamba". Poner permisos 770.</li>
+				<li><b>/var/samba/panaderos</b>: usuario propietario "supersamba", grupo propietario "panaderos". Poner permisos 770.</li>
+				<li><b>/var/samba/informaticos</b>: usuario propietario "supersamba", grupo propietario "informaticos". Poner permisos 770.</li>
+			</ul>
+		</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 3:</b> Comandos:
+			<ul type='square'>
+				<li><b>mkdir nombre-carpeta</b>: para la creación de las carpetas.</li>
+				<li><b>chown nombre-usuario-propietario.nombre-grupo-propietario</b>: para modificar el usuario y grupo propietario de las carpetas.</li>
+				<li><b>chmod 770 nombre-carpeta</b>: cambiar los permisos de las carpetas a 770 (rwxrwx---).</li>
+			</ul>
+	</div>
+	<br/>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 4:</b> Información:
+			<ul type='square'>
+				<li><b>[public]</b> es un recurso compartido accesible para todos los usuarios en modo lectura.</li>
+				<li><b>[cdrom]</b> es el recurso dispositivo cdrom de la máquina donde está instalado el servidor Samba.</li>
+			</ul>
+	</div>
+	<br/>
+	<center>
+		<img src='./files/debianwindows/crearcarpetasypermisos.png'/><br/>
+		<p><i><b>Imagen 18:</b> Crear los recursos compartidos.</i></p>
+	</center>
+	<ul>
+		<li><b>Añadir usuarios a Samba</b>
+		Después de crear los usuarios en el sistema, hay que añadirlos a Samba.
+			<ul type='square'>
+				<li>Para eso hay que usar el comando siguiente para cada usuario de Samba: <b>smbpasswd -a nombreusuario.</b></li>
+				<br/>
+				<center>
+					<img src='./files/debianwindows/añadirusuariossamba.png'/><br/>
+					<p><i><b>Imagen 19:</b> Añadir usuarios a Samba.</i></p>
+				</center>
+				<li>Al terminar comprobar la lista de usuarios Samba con el comando: <b>pdbedit -L</b></li>
+				<br/>
+				<center>
+					<img src='./files/debianwindows/usuariossamba.png'/><br/>
+					<p><i><b>Imagen 20:</b> Lista de usuarios Samba.</i></p>
+				</center>
+			</ul>
+		</li>
+	</ul>
+	<ul>
+		<li>Ahora que se ha terminado con el servidor hay que reiniciar el servicio para que se lean los cambios de configuración. Para ello en Debian 7 se utiliza el comando <b>/etc/init.d/samba restart</b>. Esta expresión para y comienza de nuevo los servicios <b>nmbd</b> y <b>smbd</b>.</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/restablecerservicio.png'/><br/>
+		<p><i><b>Imagen 21:</b> Reiniciar el servicio Samba.</i></p>
+	</center>	
+	<ul>
+		<li>Comprobar la configuración del servidor con el comando:<b> testparm</b>.</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/testparm.png'/><br/>
+		<p><i><b>Imagen 22:</b> Testparm.</i></p>
+	</center>
+	<br/>
+	<hr id='1.4' size='3px' noshade='noshade'/>
+	<a href='#1.3'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.3'>Principio del Punto 1.3</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.5'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.5'>Fin del punto 1.5</a> 
+	<h3>1.4.- Cliente Windows GUI</h3>
+	<ul>
+		<li>Desde un cliente de Windows se accede a los recursos compartidos del servidor Samba, comprobando el acceso como si fuéramos un panadero, un informático y un invitado. El recurso <b>[panaderos]</b> está establecido que puedan acceder los usuarios del grupo informaticos y panaderos. Al intentar acceder desde Windows al recurso con un usuario del grupo informaticos se produce un error indicando que se carecen de los permisos
+		necesarios para entrar. Esto se debe a que inicialmente la carpeta panaderos en la máquina servidor del recurso (Debian 7) se estableció que el usuario propietario fuera <b>supersamba</b> y el grupo propietario de la carpeta fuera <b>panaderos</b>, teniendo control total ambos y ninguno para otros grupos o usuarios (ver Imagen 18). Por ello al intentar entrar con un usuario informático deniega el acceso. Para poder entrar
+		en el directorio, en la máquina servidor se cambia el grupo propietario de la carpeta /var/samba/panaderos a <b>usuariosamba</b>, grupo que incluye a panaderos e informáticos.</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/cambiarpanaderos.png'/><br/>
+		<p><i><b>Imagen 23:</b> Cambio de permisos en /var/samba/panaderos.</i></p>
+	</center>
+		<ul>
+		<li>Comprobar los accesos a los recursos compartidos.</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 5:</b>Después de cada conexión se quedan guardada la información en el cliente. Para cerrar las conexiones SMB/CIFS que ha realizado el cliente al servidor, se usa el comando: <b>C:>net use * /d /y</b>.
+		<br/><br/>
+		<center>
+			<img src='./files/debianwindows/pruebaconexion6.png'/><br/>
+			<p><i><b>Imagen 24:</b> Ejemplo de cierre de las conexiones SMB/CIFS.</i></p>
+		</center>
+	</div>
+	<br/>
+	<center>
+		<img src='./files/debianwindows/recursocompartidored.png' width='55%'/><br/>
+		<p><i><b>Imagen 25:</b> Búsqueda de la máquina servidor a través de su nombre NetBIOS (ORTEGA_DEBIAN)</b>.</i></p>
+		<img src='./files/debianwindows/pan1panaderos2.png' width='45%'/>
+		<img src='./files/debianwindows/pan1panaderos.png' width='45%'/><br/>
+		<p><i><b>Imágenes 26 y 27:</b> Acceso a [panaderos] con el usuario pan1.</i></p>
+		<img src='./files/debianwindows/info1panaderos.png' width='45%'/>
+		<img src='./files/debianwindows/info1panaderos2.png' width='45%'/><br/>
+		<p><i><b>Imágenes 28 y 29:</b> Acceso a [panaderos] con el usuario info1.</i></p>
+		<img src='./files/debianwindows/informaticos.png' width='45%'/>
+		<img src='./files/debianwindows/informaticos2.png' width='45%'/><br/>
+		<p><i><b>Imágenes 30 y 31:</b> Acceso a [informaticos] con el usuario info1.</i></p>
+		<img src='./files/debianwindows/32.png' width='45%'/>
+		<img src='./files/debianwindows/33.png' width='45%'/><br/>
+		<p><i><b>Imágenes 32 y 33:</b> El acceso a [public] no requiere de usuario ni contraseña al ser un recurso público.</i></p>
+	</center>
+		<ul>
+		<li>Desde un cliente de Windows se comprueba que <b>en las carpetas [panaderos] e [informaticos] es posible crear carpetas/directorios</b>. En cambio <b>el recurso [public]</b> está establecido que puedan entrar todos los usuarios pero que sea de <b>sólo lectura (read only), por lo que impide la creación de ficheros o directorios</b>, como muestra la imagen siguiente:</li>
+	</ul>
+	<center>
+		<img src='./files/debianwindows/error.png' width='55%'/><br/>
+		<p><i><b>Imagen 34:</b> Error al intentar crear carpeta en [public] al ser de sólo lectura.</i></p>
+	</center>
+	<hr id='1.5' size='3px' noshade='noshade'/>
+	<a href='#1.4'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.4'>Principio del Punto 1.4</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.6'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.6'>Fin del punto 1.5</a> 
+	<h3>1.5.- Cliente Windows comandos</h3>
+	<ul>
+		<li>En el cliente Windows, para consultar todas las conexiones/recursos conectados se introduce el comando: <b>C:> net use</b>. De inicio al ejecutar <b>net use</b> se comprueba que NO hay conexiones establecidas.</li>
+		<li>En el cliente Windows, para cerrar las conexiones SMB al servidor se introduce el comando: <b>C:> net use * /d /y</b>.</li>
+		<li>Comprobar los accesos a los recursos compartidos:</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+	<b>NOTA 6:</b>
+		Para establecer conexión con los recursos compartidos se utilizó la expresión <b>net use letra_unidad \\ip-servidor-samba\recurso_compartido /user:nombre_usuario /persistent:yes</b> de la cual se puede indicar lo siguiente:
+			<ul>
+				<li><b>net use</b> -> comando que permite conectar un equipo a un recurso compartido o lo desconecta. Si se usa sin opciones, muestra las conexiones del equipo.</li>
+				<ul type='square'>
+					<li><b>Parámetros:</b></li>
+					<li style=list-style:none;><b>letra_unidad:</b> letra de la unidad donde se va a montar el recurso compartido (por ejemplo N:).</li>
+					<li style=list-style:none;><b>\\ip-servidor-samba\recurso_compartido:</b> dirección del recurso al que se quiere acceder (por ejemplo \\172.16.108.205\panaderos).</li>
+					<li style=list-style:none;><b>user:</b> usuario que accederá al recurso (por ejemplo pan1).</li>
+					<li style=list-style:none;><b>persistent:yes:</b> controla el uso de conexiones de red persistentes. Si su valor es "yes" guarda las conexiones a medida que se establece y se restaura en el siguiente inicio de sesión.</li>    					
+				</ul>
+			</ul>
+	</div><br/>
+	<center>
+		<img src='./files/debianwindows/pruebaconexion5.png'/><br/>
+		<p><i><b>Imagen 35:</b> Examinar la red con el comando <b>net view</b>.</i></p>
+		<img src='./files/debianwindows/entrarpan1einfo1panaderos.png'/><br/>
+		<p><i><b>Imagen 36:</b> Acceso a [panaderos] con los usuarios pan1 e info1.</i></p>
+		<img src='./files/debianwindows/entrarinformaticosinfo1.png'/><br/>
+		<p><i><b>Imagen 37:</b> Acceso a [informaticos] con el usuario info1.</i></p>
+		<img src='./files/debianwindows/entrarenpublicsmbguest.png'/><br/>
+		<p><i><b>Imagen 38:</b> Acceso a [public] con el usuario smbguest (usuario invitado).</i></p>
+		<img src='./files/debianwindows/netuse.png'/><br/>
+		<p><i><b>Imagen 39:</b> Ejemplo de <b>net use</b> tras el acceso a uno de los recursos compartidos.</i></p>
+	</center>
+	<br/>
+	<hr id='1.6' size='3px' noshade='noshade'/>
+	<a href='#1.5'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.5'>Principio del Punto 1.5</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.7'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.7'>Fin del punto 1.6</a> 
+	<h3>1.6.- Cliente GNU/Linux GUI</h3>
+	<ul>
+		<li>En el caso de la máquina cliente será necesario instalar <b>smbclient</b> (Samba cliente) y <b>cifs-utils</b>.</li>
+		<li>Comprobar que se tiene acceso al recurso compartido desde un cliente GNU/Linux GUI. Para ello se pueden usar herramientas como:</li>
+			<ul type='square'>
+				<li><b>Nautilus</b> en GNOME.</li>
+				<li><b>Konqueror</b> en KDE.</li>
+				<li>En <b>Ubuntu</b> se puede ir a "Lugares -> Conectar con el servidor...".</li>
+				<li>Se puede instalar la aplicación <b>smb4k</b>.</li>
+				<li>Existen otras para otros entornos gráficos.</li>
+			</ul>
+		<li>En este caso como cliente GNU/Linux se utilizó una distribución Ubuntu 12.04 con interfaz gráfica GNOME. Como herramientas se usaron dos: <b>Nautilus</b> y <b>smb4k</b>.</li>
+		<li>Comprobar los accesos a los recursos compartidos con <b>Nautilus</b>:</li>
+	</ul>	
+	<br/>
+	<center>
+		<img src='./files/debianubuntu/examinarred1.png' width='45%'/>
+		<img src='./files/debianubuntu/examinarred2.png' width='45%'/><br/>
+		<p><i><b>Imágenes 40 y 41:</b> Examinar la red.</i></p>
+		<img src='./files/debianubuntu/entrarpan1.png' width='45%'/>
+		<img src='./files/debianubuntu/entrarpan12.png' width='45%'/><br/>
+		<p><i><b>Imágenes 42 y 43:</b> Acceso a [panaderos] con el usuario pan1.</i></p>
+		<img src='./files/debianubuntu/entrarinfo1.png' width='45%'/>
+		<img src='./files/debianubuntu/entrarinfo1panaderos.png' width='45%'/><br/>
+		<p><i><b>Imágenes 44 y 45:</b> Acceso a [panaderos] con el usuario info1.</i></p>
+		<img src='./files/debianubuntu/entrarinfo1informaticos.png' width='45%'/>
+		<img src='./files/debianubuntu/entrarinformaticos.png' width='45%'/><br/>
+		<p><i><b>Imágenes 46 y 47:</b> Acceso a [informaticos] con el usuario info1.</i></p>
+		<img src='./files/debianubuntu/46.png' width='45%'/>
+		<img src='./files/debianubuntu/47.png' width='45%'/><br/>
+		<p><i><b>Imágenes 48 y 49:</b> El acceso a [public] no requiere de usuario ni contraseña al ser un recurso público.</i></p>
+	</center>
+	<ul>
+		<li>Ejemplo de acceso al recurso compartido [panaderos] con el usuario pan1 a través de <b>smb4k</b> (instalado con el gestor de paquetes synaptic):</li>
+	</ul>
+	<center>
+		<img src='./files/debianubuntu/smb4k.png' width='45%'/>
+		<img src='./files/debianubuntu/smb4k2.png' width='45%'/><br/>
+		<p><i><b>Imágenes 50 y 51:</b> Montar el recurso compartido [panaderos] usando el usuario pan1.</i></p>
+		<img src='./files/debianubuntu/smb4k3.png' width='45%'/>
+		<img src='./files/debianubuntu/smb4k4.png' width='45%'/><br/>
+		<p><i><b>Imágenes 52 y 53:</b> Abrir el recurso con <b>Nautilus</b>.</i></p>
+	</center>
+	<ul>
+		<li>Comprobación de que se pueden crear carpetas/archivos en [panaderos] e [informaticos]. [public] es sólo lectura.</li>
+	</ul>
+	<center>
+		<img src='./files/debianubuntu/52.png' width='45%'/>
+		<img src='./files/debianubuntu/53.png' width='45%'/><br/>
+		<p><i><b>Imágenes 54 y 55:</b> Creación directorio de prueba en [panaderos] en la máquina cliente (Ubuntu). A la derecha se muestra el cambio en la máquina servidor (Debian).</i></p>
+		<img src='./files/debianubuntu/54.png' width='45%'/>
+		<img src='./files/debianubuntu/55.png' width='45%'/><br/>
+		<p><i><b>Imágenes 56 y 57:</b> Creación directorio de prueba en [informaticos] en la máquina cliente (Ubuntu). A la derecha se muestra el cambio en la máquina servidor (Debian).</i></p>
+		<img src='./files/debianubuntu/56.png' width='45%'/><br/>
+		<p><i><b>Imagen 58:</b> Error al intentar crear carpeta en [public] al ser de sólo lectura.</i></p>
+	</center>		
+	<br/>
+	<hr id='1.7' size='3px' noshade='noshade'/>
+	<a href='#1.6'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.6'>Principio del Punto 1.6</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.8'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.8'>Fin del punto 1.7</a> 
+	<h3>1.7.- Cliente GNU/Linux comandos</h3>
+	<ul>
+		<li>Existen comandos (mount, smbmount y smbclient) que ayudan a acceder vía comandos al servidor Samba desde el cliente.</li>
+		<li>En este caso como equipo cliente GNU/Linux se utilizó una distribución Ubuntu 12.04. Desde este equipo se emplearán comandos para acceder a la carpeta compartida.</li>
+		<li>Primero se comprueba el uso de las siguientes herramientas:</li>
+			<ul type='square'>
+				<li><b>smbtree</b></li>
+				<br/>
+					<center>
+						<img src='./files/debianubuntu/smbtree.png' width='45%'/><br/><br/>
+						<img src='./files/debianubuntu/smbtree2.png' width='45%'/><br/><br/>
+						<img src='./files/debianubuntu/smbtree3.png' width='45%'/><br/>
+						<p><i><b>Imagen 59:</b> Comprobación de uso de <b>smbtree</b>.</i></p>
+					</center>
+					<br/>
+				<li><b>smbclient --list ip-servidor-samba</b></li>
+				<br/>
+					<center>
+						<img src='./files/debianubuntu/smbclient.png' width='45%'/><br/>
+						<p><i><b>Imagen 60:</b> Examinar la red con <b>smbclient</b>.</i></p>
+					</center>
+			</ul>
+		<li>Se crean las siguientes carpetas donde se montaran los recursos compartidos:</li>
+			<ul type='square'>
+				<li><b>/mnt/samba-remoto/panaderos</b></li>
+				<li><b>/mnt/samba-remoto/informaticos</b></li>
+				<li><b>/mnt/samba-remoto/public</b></li>
+			</ul>
+	</ul>	
+	<center>
+		<img src='./files/debianubuntu/directorios.png'/><br/>
+		<p><i><b>Imagen 60:</b> Creación de directorios con <b>mkdir</b>.</i></p>
+	</center>	
+	<ul>
+		<li><b>Montaje</b>: se procede a montar el recurso compartido deseado de Samba Server (Debian 7), como si fuera una carpeta más del sistema de la máquina cliente (Ubuntu). 
+		Para ello es necesario ser el usuario <b>root</b> y utilizar la expresión <b>"mount -t cifs //ip-servidor-samba/recurso_compartido dirección-carpeta-montaje -o username=nombre-usuario,password=contraseña,workgroup=grupo-trabajo"</b> de la cual se puede indicar lo siguiente: </li>
+		<ul type='square'>
+			<ul type='circle'>
+				<li><b>mount</b> -> comando que permite conectar un sistema de ficheros con un directorio (punto de montaje) del sistema Linux.</li>
+				<li><b>Parámetros:</b>
+					<ul style=list-style:none;>
+						<li><b>-t cifs</b>: especifica el tipo de sistema de archivos, en este caso "cifs".</li>
+						<li><b>//ip-servidor-samba/recurso_compartido</b>: dirección del recurso al que se quiere acceder (por ejemplo //172.16.108.205/panaderos).</li>
+						<li><b>dirección-carpeta-montaje</b>: directorio donde se va a montar el recurso de la máquina servidor en la máquina cliente (por ejemplo /mnt/samba-remoto/panaderos).</li>
+						<li><b>-o</b>: indica que lo siguiente escrito son opciones de montaje.</li>
+						<li><b>username</b>: usuario que accederá al recurso (por ejemplo pan1).</li>
+						<li><b>password</b>: contraseña del usuario que accederá al recurso.</li>
+						<li><b>workgroup</b>: grupo de trabajo (por ejemplo AULA108).</li>    					
+					</ul>
+				</li>
+			</ul>
+		</ul>
+		<li><b>Comprobación</b>: se ejecuta el comando <b>df -hT</b> después del montaje.</li>
+	</ul>
+	<center>
+		<img src='./files/debianubuntu/pan1panaderos.png' width='60%'/><br/>
+		<p><i><b>Imagen 61:</b> Montaje del recurso [panaderos] en la carpeta /mnt/samba-remoto/panaderos y comprobación con el comando <b>df -hT</b>.</i></p>
+		<img src='./files/debianubuntu/info1informaticos.png' width='60%'/><br/>
+		<p><i><b>Imagen 62:</b> Montaje del recurso [informaticos] en la carpeta /mnt/samba-remoto/informaticos y comprobación con el comando <b>df -hT</b>.</i></p>
+		<img src='./files/debianubuntu/public.png' width='60%'/><br/>
+		<p><i><b>Imagen 63:</b> Montaje del recurso [public] en la carpeta /mnt/samba-remoto/public y comprobación con el comando <b>df -hT</b>.</i></p>
+	</center>		
+	<ul>
+		<li>Ejemplo creación de fichero <b>pruebaubuntu.txt</b> en la máquina cliente (Ubuntu) en el recurso [panaderos] y comprobación de su aparición en la máquina servidor Samba (Debian).</li>
+	</ul>	
+	<center>
+		<img src='./files/debianubuntu/crearpruebatxt.png' width='60%'/><br/><br/>
+		<img src='./files/debianubuntu/crearpruebatxt2.png'/><br/>
+		<p><i><b>Imágenes 64 y 65:</b> Creación de pruebaubuntu.txt en la máquina Ubuntu cliente (imagen izquierda) y su aparción en la máquina Debian servidor (imagen derecha).</i></p>
+	</center>
+	<ul>
+		<li>Por último para desmontar todos los recursos montados se empleó la expresión <b>umount -a</b>.</li>
+	</ul>		
+	<center>
+		<img src='./files/debianubuntu/desmontartodo.png'/><br/>
+		<p><i><b>Imagen 66:</b> Desmontar todos los recursos.</i></p>
+	</center>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 7:</b>
+			<ul type='square'>
+				<li>Como se comprueba todo lo que se escriba en la carpeta de montaje aparece en la máquina del servidor Samba.</li>
+				<li>Para montar con comandos un recurso Samba remoto, sin ser el usuario root, es necesario modificar adecuadamente el fichero /etc/fstab.</li>
+			</ul>
+	</div>	
+	<br/>
+	<hr id='1.8' size='3px' noshade='noshade'/>
+	<a href='#1.7'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.7'>Principio del Punto 1.7</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> | <a href='#1.9'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#1.9'>Fin del punto 1.8</a> 
+	<h3>1.8.- Preguntas para resolver</h3>	
+	<ul>
+		<li><b>¿Las claves de los usuarios en GNU/Linux deben ser las mismas que las que usa Samba?</b></li><br/>
+		<b>No</b>, pueden ser diferentes.<br/><br/>
+		<li><b>¿Puedo definir un usuario en Samba llamado panadero3, y que no exista como usuario del sistema?</b></li><br/>
+		<b>No</b>, todo usuario de Samba debe existir en el sistema. Lo que sí es posible hacer es que un usuario no pueda acceder al sistema, pero sí a Samba.<br/><br/>
+		<li><b>¿Cómo podemos hacer que los usuarios pan1 y pan2 no puedan acceder al sistema pero sí a Samba?</b></li><br/>
+		Para hacer que pan1 y pan2 no puedan acceder al sistema per sí a Samba sería necesario <b>modificar el fichero /etc/passwd</b> de la siguiente manera:<br/><br/>
+		<center>
+			pan1:x:1004:1003:/home/pan1:<b>/bin/false</b><br/><br/>
+			pan2:x:1005:1003:/home/pan2:<b>/bin/false</b><br/><br/>
+		</center>
+		Al igual que se hizo en la práctica con el usuario <b>smbguest</b> en el <b>punto 1.2, imágenes 10 y 11</b>.<br/><br/>
+		<li><b>Añadir el recurso [homes] al fichero smb.conf según los apuntes. ¿Qué efecto tiene?</b></li><br/>
+		Si se añade el recurso [homes] se define automáticamente un recurso de red por cada usuario conocido por Samba. Este recurso, por defecto, está asociado al directorio de conexión de cada usuario en el ordenador en el que Samba está instalado. En la siguiente imagen se muestra el montaje del "home" del susuario pan1.<br/><br/>
+	</ul>
+	<center>
+		<img src='./files/debianubuntu/homes.png' width='55%'/><br/>
+		<p><i><b>Imagen 67:</b> Ejemplo de montaje del home de pan1. Comprobación con el comando <b>df -hT</b>.</i></p>
+	</center>	
+	<hr id='1.9' size='3px' noshade='noshade'/>
+	<a href='#1.8'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#1.8'>Principio del Punto 1.8</a> | <a href='#indice'><img src='./files/debian.png' class='icon' width='20px'/></a> <a href='#indice'>Principio</a> 
+	<br/><br/>	
+	<center>
+		<font size='2' color='grey'>Alejandro Ortega Freire 1ºASIR
+		<br/>
+		Implantación de Sistemas Operativos
+		</font>
+		<br/>
+		<img src='./files/logoale.png' width='100px' class='icon'/><br/>
+	</center>	
+	</body>
+</html>

@@ -1,0 +1,230 @@
+<!--
+  AUTORES: Alejandro Ortega Freire - Efraín Hernández Morales
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 10/03/2014
+  ACTIVIDAD:  A1: Prácticas de RAID
+-->
+
+<html>
+	<head>
+		<title>A1: Pr&aacute;cticas de RAID</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	</head>
+	<body>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A1: Prácticas de RAID</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire, Efraín Hernández Morales</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>10 de marzo de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#indice'>1.- RAID-0</a> | <a href='#indice'>1.1- Instalar SO</a> | <a href='#1.2'>1.2.- Creación RAID-0</a> | <a href='#1.3'>1.3.- Particionado / instalación</a> | <a href='#1.4'>1.4.- Comprobación</a> | <a href='#2'>2.- RAID-1</a> | <a href='#2.1'>2.1- Preparar MV</a> | <a href='#2.2'>2.2.- Crear RAID-1</a> | <a href='#2.3'>2.3.- Pruebas</a> | <a href='#2.4'>2.4.- Comprobación</a> |
+		</div>
+	<h1>1.- Instalar SO en RAID-0</h1>
+	<p>Primero vamos a instalar un sistema operativo sobre unos discos con RAID-0 software.</p>
+	<h3>1.1- Creación de la Máquina Virtual</h3>
+	<ul>
+		<li><b>NOTA:</b> como Las máquinas virtuales de VirtualBox, sólo aceptan 4 discos IDE, o 3 discos IDE y 1 unidad de cdrom, no vamos a poder realizar este ejercicio con el SO instalado anteriormente. Podemos resolverlo: Añadiendo controladores SATA y/o SCSI a nuestra máquina virtual.</li>
+		<li><b>Crear una máquina virtual nueva</b> 3 discos virtuales: (a) 2GB, (b) 2GB, y (c) 100MB.</li>
+	</ul>
+	<hr id='1.2' size='3px' noshade='noshade'/>
+	<h3>1.2- Creación de RAID-0</h3>
+	<ul>
+		<li>Vamos a instalar GNU/Linux Debian 7.1.0. Podemos elegir la instalación sin entorno gráfico, con LXDE, XFCE, GNOME, KDE, etc. Tener en cuenta que depende de lo que elijan ocupará más o menos espacio en disco.</li>
+		<li>Los discos (a) y (b), van a formar un RAID-0. Para hacer el RAID-0, elegimos formato de los discos (a) y (b), tipo RAID.</li>
+		<li>Luego debemos ir a "Configuración RAID software", y elegimos que queremos hacer un raid0, con los discos (a) y (b).</li>
+	</ul>
+	<hr id='1.3' size='3px' noshade='noshade'/>
+	<h3>1.3- Particionado e instalación</h3>
+	<ul>
+		<li> Ya está, ahora hay que crear lo siguiente:</li>
+			<ul type='circle'>
+				<li><b>NOTA:</b> vamos a hacer una instalación sin swap (Por esta vez).</li>
+				<li>La partición "/boot", va en el disco (c) de 100MB (los ficheros que inician el SO van en una partición aparte sin RAID, para evitar problemas en el boot del sistema).</li>
+				<li>Una partición para instalar el sistema operativo dentro del dispositivo /dev/raid0.</li>
+			</ul>
+		<li>Seguimos la instalación como siempre.</li>
+	</ul>
+	<hr id='1.4' size='3px' noshade='noshade'/>
+	<h3>1.4- Salida de comprobación</h3>
+	<ul>
+		<li> Una vez instalado ejecutar los siguientes comandos, e incluir su salida en el informe:</li>
+			<ul type='circle'>
+				<li><b>ifconfig</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raidcero/ifconfig.png'/><br/>		
+		<p><i><b>Imagen 1:</b> Resultado del comando <b>ifconfig</b>.</i></p>			
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>fdisk -l</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raidcero/fdisk.png'/><br/>		
+		<p><i><b>Imagen 2:</b> Resultado del comando <b>fdisk -l</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>df -hT</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raidcero/dfhT.png'/><br/>		
+		<p><i><b>Imagen 3:</b> Resultado del comando <b>df -hT</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>cat /proc/mdstat</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raidcero/cat.png'/><br/>		
+		<p><i><b>Imagen 4:</b> Resultado del comando <b>cat /proc/mdstat</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>lsblk -fm</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raidcero/lsblkfm.png'/><br/>		
+		<p><i><b>Imagen 5:</b> Resultado del comando <b>lsblk -fm</b>.</i></p>						
+	</center>
+	<hr id='1.5' size='3px' noshade='noshade'/>
+	<a href='#indice'><img src='./files/debian.png' width='20px'/></a> <a href='#indice'>Principio del Bloque 1 / RAID-0</a>
+	<br/><br/>
+	<h1 id='2'>2.- Añadir discos en RAID-1</h1>
+	<ul>
+		<li><b>Consejo:</b> hacer una copia de seguridad de la MV (Exportar/importar de VBox).</li>
+		<li>Ahora vamos a añadir al sistema anterior, dos discos en RAID-1 software.</li>
+	</ul>
+	<h3 id='2.1'>2.1- Preparar la Máquina Virtual</h3>
+	<ul>
+		<li><b>NOTA:</b> como las máquinas virtuales de VirtualBox, sólo aceptan 4 discos IDE, o 3 discos IDE y 1 unidad de cdrom, no vamos a poder realizar este ejercicio con el SO instalado anteriormente. Podemos resolverlo: Añadiendo controladores SATA a nuestra máquina virtual.</li>
+		<li><b>Realizar las siguientes tareas:</b></li>
+			<ul type='circle'>
+				<li>Crear 2 discos virtuales: (d) 500MB y (e) 500Mb.</li>
+				<li><b>NOTA:</b> (d) y (e) deben ser del mismo tamaño.</li>
+				<li>Reiniciar la MV.</li>
+			</ul>
+	</ul>
+	<hr id='2.2' size='3px' noshade='noshade'/>
+	<h3>2.2- Usar mdadm para crear RAID-1</h3>
+	<ul>
+		<li><b>Instalar el paquete mdadm</b> (Administración de dispositivos RAID). Ahora si debe existir el fichero /etc/mdadm/mdadm.conf.</li>
+		<li><b>Crear un RAID-1</b> (/dev/md1) con los discos (d) y (e) (<a href="http://en.wikipedia.org/wiki/Mdadm">Consultar URL</a>: comando "mdadm --create"). Para comprobar si se ha creado el raid1 correctamente "cat /proc/mdstat", "lsblk -fm".</li>
+		<br/>
+			<center>
+				<img src='./files/raiduno/raid1.png'/><br/>		
+				<p><i><b>Imagen 6:</b> Crear RAID-1 con <b>mdadm - -create</b>.</i></p>						
+			</center>	
+		<li>Formatear el RAID-1 con ext4: <b>#mkfs -t ext4 /dev/md1</b></li><br/>
+			<center>
+				<img src='./files/raiduno/ext4a.png'/><br/>		
+				<p><i><b>Imagen 7:</b> Dar formato <b>ext4</b> al RAID-1.</i></p>						
+			</center>	
+		<li>Montar el RAID-1 (/dev/md1) en /mnt/raid1.</b></li>
+		<li>Ahora podemos escribir información en /mnt/raid1.</li><br/>
+			<center>
+				<img src='./files/raiduno/raid1d.png'/><br/>		
+				<p><i><b>Imagen 8:</b> Montar el RAID-1 en <b>/mnt/raid1</b> y crear ficherso de prueba.</i></p>						
+			</center>	
+		<li>Consultar el fichero <b>/etc/mdadm/mdadm.conf</b>. Si al final del archivo de configuración no se muestra información del RAID1, entonces debemos añadirla nosotros manualmente antes de reiniciar el equipo. Para ello nos ayudaremos de la salida del comando siguiente: "mdadm --examine --scan". Con esto conseguimos que el disco RAID1 no pierda su configuración con cada reinicio del sistema.</li>
+	</ul>
+	<hr id='2.3' size='3px' noshade='noshade'/>
+	<h3>2.3- Quitar disco y probar</h3>
+	<ul>
+		<li> Apagamos la MV.</li>
+		<li>Quitar en VirtualBox uno de los discos del raid.</li>
+		<li>Reiniciamos la MVy comprobamos que la información no se ha perdido.</li>
+		<li>Volver a poner el disco en la MV, reiniciar y comprobar que todo está correcto.</li>
+	</ul>
+	<hr id='2.4' size='3px' noshade='noshade'/>
+	<h3>2.4- Salida de comprobación</h3>
+	<ul>
+		<li><b>NOTA:</b> para consultar el UUID de una partición podemos usar el comando <b>"blkid"</b> o hacer <b>"vdir /dev/disk/by-uuid"</b>.</li>
+		<li> Una vez realizado lo anterior, ejecutar los siguientes comandos, y comprobar su salida (incluir en el informe):</li>
+			<ul type='circle'>
+				<li><b>ifconfig</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/ifconfig3.png'/><br/>		
+		<p><i><b>Imagen 9:</b> Resultado del comando <b>ifconfig</b>.</i></p>			
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>fdisk -l</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/fdiskfinal1.png'/><br/>		
+		<p><i><b>Imagen 10:</b> Resultado del comando <b>fdisk -l</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>df -hT</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/dfht2.png'/><br/>		
+		<p><i><b>Imagen 11:</b> Resultado del comando <b>df -hT</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>cat /proc/mdstat</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/mdstat.png'/><br/>		
+		<p><i><b>Imagen 12:</b> Resultado del comando <b>cat /proc/mdstat</b>.</i></p>						
+	</center>
+	<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>lsblk -fm</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/lsblkfm.png'/><br/>		
+		<p><i><b>Imagen 13:</b> Resultado del comando <b>lsblk -fm</b>.</i></p>						
+	</center>
+		<ul style=list-style:none;>
+		<li></li>
+			<ul type='circle'>
+				<li><b>cat /proc/mdadm/mdadm.conf</b></li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/raiduno/mdadmconf3.png'/><br/>		
+		<p><i><b>Imagen 14:</b> Resultado del comando <b>cat /proc/mdadm/mdadm.conf</b>.</i></p>						
+	</center>
+	<hr id='2.5' size='3px' noshade='noshade'/>
+	<a href='#2'><img src='./files/debian.png' width='20px'/></a> <a href='#2'>Principio del Bloque 2 / RAID-1</a> | <a href='#indice'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#indice'>Índice</a>
+	<br/><br/>
+	<center>
+		<font size='2' color='grey'>Alejandro Ortega Freire - Efraín Hernández Morales 1ºASIR
+		<br/>
+		Implantación de Sistemas Operativos
+	</center>
+	</body>
+</html>

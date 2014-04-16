@@ -1,0 +1,138 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>A2: Prácticas de LVM por Alejandro Ortega Freire y Efraín Hernández Morales.</title>
+</head>
+<body>
+<div style='display:table-row; padding: 10px;'>
+  <div style='float: left; width=20%; padding:10px;'>
+  <img src='./files/logo.png'/>
+  </div>
+  <div style='float: left;padding:10px'>
+  <ul>
+    <li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+    <li><b>T&iacute;tulo del trabajo</b> <i>Prácticas de LVM</i></li>
+    <li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire y Efraín Hernández Morales</i></li>
+    <li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+    <li><b>Fecha de entrega:</b> <i>10 de Marzo de 2014</i></li>
+  </ul>
+  </div>
+</div>
+<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+<a href='#bloque1'>1. Instalar SO sobre LVM</a> | <a href='#bloque2'>1.1 Preparar MV</a> | <a href='#bloque3'>1.2 Particionar</a> | <a href='#bloque4'>1.3 Ampliar VL</a> | <a href='#bloque5'>2. Modificar el espacio físico LVM</a> | <a href='#bloque6'>2.1 Preparar la MV</a> | <a href='#bloque7'>2.2 Crear VG y VL</a> | <a href='#bloque8'>2.3 Escribir información</a> | <a href='#bloque9'>2.4 Añadir más tamaño</a> |<a href='#bloque10'>2.5 Quitar un disco físico</a> |<a href='#final'>Conclusiones</a>
+</div>
+<a id='bloque1'></a><h2>1. Instalar SO sobre LVM<br /></h2>Vamos a instalar un sistema operativo GNU/Linux Debian, sobre unos discos con LVM.<br />
+<ul>
+  <li>NOTA:<i> Otra forma de producir un efecto similar al de LVM, es mediante el uso de sistemas de ficheros ZFS (<a title="zfs" target="_blank" href="http://www.agileweboperations.com/zfs-vs-lvm-for-dummies">Consultar</a>). Nosotros NO vamos a usar ZFS sino LVM en nuestra práctica, pero si algún grupo desea usar ZFS debe hablar con el profesor.</i><br /></li>
+</ul>
+<a id='bloque2'></a><h3>1.1 Preparar MV</h3>Realizar las siguientes tareas:<span style="font-weight: bold;"><br /></span>
+<ul>
+  <li>Crear MV para Debian, con un disco de 5GB.<br /></li>
+  <li>Comenzar a instalar GNU/Linux Debian.</li>
+  <img src='./files/1.png'/>
+</ul>
+<a id='bloque3'></a><h3>1.2 Particionar<br /></h3>
+<ul>
+  <li>Crearemos una partición de 100MB para boot. Tener en cuenta que la partición &quot;/boot&quot; va a parte (Fuera de LVM).</li>
+  <img src='./files/2.png'/>
+  <li>Crear en el resto una partición LVM. En la partición LVM, podemos hacer un grupo de volumen llamado <span style="font-weight: bold;">vg-debian</span>.</li>
+   <img src='./files/5.png'/>
+  <li>Dentro del <span style="font-weight: bold;">vg-debian</span>, podemos los VL (volúmenes lógicos) siguientes: <span style="font-weight: bold;"></span></li>
+  <ul>
+    <li><span style="font-weight: bold;">lv-swap</span> (500 MB) usar para área de intercambio</li>
+	<img src='./files/7.png'/>
+    <li><span style="font-weight: bold;">lv-raiz</span> (4GB) usar como raíz de la instalación del SO.</li>
+	<img src='./files/8.png'/>
+    <li><span style="font-weight: bold;">lv-datos</span> (100MB) usar como /home del sistema.</li>
+	<img src='./files/9.png'/>
+  </ul>
+  <li>Vemos que nos ha sobrado espacio. Lo dejamos así porque lo usaremos más adelante.</li>
+  <img src='./files/10.png'/>
+</ul>
+<ul>
+  <li>Instalamos el sistema operativo.</li>
+  <li>Reiniciamos el sistema y comprobamos lo que tenemos:</li>
+  <ul>
+    <li><font face="courier new,courier,monospace">vgdisplay</font></li>
+	<img src='./files/11.png'/>
+    <li><font face="courier new,courier,monospace">lvdisplay vg-debian</font><br /></li>
+	<img src='./files/12.png'/>
+  </ul>
+</ul>
+<a id='bloque4'></a><h3>1.3 Ampliar VL<br /></h3>
+<ul>
+  <li>Ahora podremos ampliar &quot;en caliente&quot;, el espacio de <span style="font-weight: bold;">lv-datos</span> de 100MB a 400MB.</li>
+  <ul>
+    <li>Consultar el tamaño actual del volumen lógico: <span style="font-family: courier new,courier,monospace;"># lvdisplay -v /dev/vg-debian/lv-datos</span></li>
+	<img src='./files/13.png'/>
+    <li>Para ampliar el tamaño del volumen lógico a 1 GB: <span style="font-family: courier new,courier,monospace;"># lvextend -L 400 /dev/vg-debian/lv-datos</span></li>
+	<img src='./files/14.png'/>
+  </ul>
+</ul><hr /><br />
+<ul>
+</ul>
+<a id='bloque5'></a><h2>2. Modificar el espacio físico LVM</h2>Consejo: Haz copia de seguridad de la MV (Exportar/importar de VBox).<br /><br />Vamos a añadir al sistema anterior, más almacenamiento físico LVM, puesto que ya hemos agotado todo el espacio libre de los discos físicos.<br /><br />Esquema de PV, VG y LV:<br /><img width="268" vspace="0" hspace="0" border="0" height="188" title="lvm-esquema1" alt="lvm-esquema1" src="http://moodle.iespuertodelacruz.es/file.php/133/raid-lvm/img/lvm-esquema1.jpeg" /><br /><br />
+<a id='bloque6'></a><h3>2.1 Preparar la MV</h3><span style="font-weight: bold;"></span>
+<ul>
+  <li>Crear 2 discos virtuales: </li>
+  <ul>
+    <li>(Disco a) 200MB: con una partición completa del disco</li>
+    <li>(Disco b) 750MB: con 3 particiones de 250MB sin definir.</li>
+	<img src='./files/16.png'/>
+  </ul>
+  <li>NOTA: <span style="font-style: italic;">Las particiones las pueden crear con </span><span style="font-family: courier new,courier,monospace; font-style: italic;">fdisk</span><span style="font-style: italic;">, </span><span style="font-family: courier new,courier,monospace; font-style: italic;">gparted</span><span style="font-style: italic;">, etc.</span></li>
+  <ul>&nbsp;
+  </ul>
+</ul>
+<a id='bloque7'></a><h3>2.2 Crear VG y VL<br /></h3>
+<ul>
+  <li>Crear un Grupo de Volumen llamado <b><font face="courier new,courier,monospace">vg-extra</font></b>, con el disco (a) y las 2 primeras particiones del (b). (Comando <span style="font-family: courier new,courier,monospace;">vgcreate</span>)<br /></li>
+  <img src='./files/17.png'/>
+  <li>Crear un nuevo Volumen Lógico llamado <b><font face="courier new,courier,monospace">lv-extra</font></b> (Comando <span style="font-family: courier new,courier,monospace;">lvcreate</span>) con tamaño 700MB.</li><img src='./files/18.png'/><br/><img src='./files/19.png'/>
+  <li>NOTA: La partición 3 del disco b NO la estamos usando por ahora.<br /></li>
+  <li>Comprobamos lo que tenemos:</li>
+  <ul>
+    <li><font face="courier new,courier,monospace">vgdisplay vg-extra<br /></font></li>
+	<img src='./files/20.png'/>
+    <li><font face="courier new,courier,monospace">lvdisplay vg-extra</font><br /></li>
+	<img src='./files/21.png'/>
+  </ul>
+</ul>
+<a id='bloque8'></a><h3>2.3 Escribir información<br /></h3>
+<ul>
+  <li>Primero vamos a crear directorio (<span style="font-family: courier new,courier,monospace;">/mnt/vol-extra),<font face="Trebuchet MS,Verdana,Arial,Helvetica,sans-serif">donde vamos a montar el nuevo dispositivo (Volumen lógico).</font><br /></span></li>
+  <img src='./files/22.png'/>
+  <li>El nuevo dispositivo /dev/vg-extra/lv-extra no tiene formato. Debe ser formateado antes de montarse.<br /></li>
+  <li>Montar el nuevo dispotivo (Volumen Lógico) en la carpeta <span style="font-family: courier new,courier,monospace;">/mnt/vol-extra</span>. A partir de ahora todo lo que escribamos en dicha carpeta se estará guardando en el dispositivo montado.<br /></li>
+  <li>Escribir información en <span style="font-family: courier new,courier,monospace;">/mnt/vol-extra</span>. Crear algunas carpetas y ficheros con tamaño mayor a cero. Por ejemplo para crear un archivo de tamaño 1M podemos hacer &quot;<font face="courier new,courier,monospace">dd if=/dev/zero of=/mnt/vol-extra/file-size-1M bs=512 count=2048</font>&quot;. El comando dd hay que usarlo con precaución.<br /></li>
+  <li>Comprobar el tamaño de VL (<span style="font-family: courier new,courier,monospace;">lvdisplay</span>), y el espacio disponible (<span style="font-family: courier new,courier,monospace;">df -hT</span>).</li>
+  <img src='./files/23.png'/>
+</ul>
+<a id='bloque9'></a><h3>2.4 Añadir más tamaño<br /></h3>
+<ul>
+  <li>Añadir la tercera partición del disco (b) (no utilizada) al VG <b><font face="courier new,courier,monospace">vg-extra</font></b>.</li>
+   <img src='./files/24.png'/>
+  <li>Ampliar el tamaño de <b><font face="courier new,courier,monospace">lv-extra</font></b> a 950MB (Comando <span style="font-family: courier new,courier,monospace;">lvextend</span>). Comprobar el aumento del espacio (<font face="courier new,courier,monospace">lvdisplay</font>)<br /></li>
+  <img src='./files/25.png'/>
+  <li>Comprobar que los datos/información no se han borrado al ampliar el volumen lógico.</li>
+  <img src='./files/26.png'/>
+</ul>
+<a id='bloque10'></a><h3>2.5 Quitar un disco físico<br /></h3>
+<ul>
+  <li>NOTA: En LVM los discos físicos se llaman volúmenes físicos (Physical Volumes).</li>
+  <li>Vamos a quitar el disco (b) del VG, sin que se pierda la información. Comprobar el tamaño utilizado con nuestros datos en vg-extra: <font face="courier new,courier,monospace">du -sh /mnt/vol-extra</font>. Este valor debe ser menor o igual al tamaño del disco (a). <br /></li>
+  <img src='./files/26.png'/>
+  <li>¿Cómo quitamos el disco (b) del VG? (<a href="http://systemadmin.es/2009/09/quitar-disco-de-volume-group-en-caliente-con-lvm-de-linux" target="_blank" title="lvm">Consultar enlace</a>)<br /></li>
+  <img src='./files/28.png'/>
+  <img src='./files/29.png'/>
+  <li>Comprobar que sí se mantiene la información.</li>
+  <li>Comprobamos lo que tenemos:</li>
+  <ul>
+    <li><font face="courier new,courier,monospace">vgdisplay</font></li>
+    <img src='./files/30.png'/>
+    <li><font face="courier new,courier,monospace">lvdisplay vg-debian</font><br /></li>
+    <img src='./files/31.png'/>
+  </ul>
+</ul><br /><hr style="width: 100%; height: 2px;" />
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!--
+  AUTOR: Alejandro Ortega Freire
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 22/01/2014
+  ACTIVIDAD:  A1: Copias de Seguridad
+-->
+
+<html>
+	<head>
+		<title>A1: Copias de seguridad</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	</head>
+	<body>
+	<div id='cabecera' style='position:static; width:100%; height:26%; overflow:hidden;'>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A1: Copias de Seguridad</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>22 de enero de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#bloque1'>1.- SO Windows</a> | <a href='#1.1'>1.1- Configuración</a> | <a href='#1.2'>1.2.- GUI</a> | <a href='#1.3'>1.3.- Comandos</a> | <a href='#bloque2'>2.- SO GNU/Linux</a> | <a href='#2.1'>2.1- Configuración</a> | <a href='#2.2'>2.2.- GUI</a> | <a href='#2.3'>2.3.- Comandos</a> | <a href='#firma'>Autor</a>
+		</div>
+	</div>
+	<div id='contenido' style='float:right; margin-top:1%; width:100%; height:73.5%; overflow:auto;'>
+		<h1><a id='bloque1'>1.- Sistema Operativo Windows</a></h1>
+		<h3 id='1.1'>1.1- Configurar el equipo con las siguientes características:</h3>
+		<ul>
+			<li><b>SO:</b> Windows 7 y/o Windows 2008 Server</li>
+			<li><b>IP:</b> 172.16.108.1XX (donde XX corresponde al nº de cada puesto, 05 en este caso)</li>
+			<li><b>Máscara de red:</b> 255.255.0.0</li>
+			<li><b>Gateway:</b> 172.16.1.1</li>
+			<li><b>Servidor DNS:</b> 172.16.1.1</li>
+		</ul>
+		<center>
+			<img src='./files/w7GUI/confredw7.png' valign='bottom' alt='Imagen 1: Captura de pantalla de Windows 7 mostrando la configuración IP.'/><br/>
+			<p><i><b>Imagen 1:</b> Captura de pantalla de Windows 7 mostrando la configuración IP.</i></p>
+		</center>
+		<ul>
+			<li><b>Nombre de equipo:</b> primer-apellido-del-alumno (ortega, en este caso)</li>
+			<li><b>Grupo de trabajo:</b> AULA108</li>
+		</ul>
+		<center>
+			<img src='./files/w7GUI/nombre.png' width='55%' valign='bottom' alt='Imagen 2: Captura de pantalla de Windows 7 mostrando el nombre del equipo.'/><br/>
+			<p><i><b>Imagen 2:</b> Captura de pantalla de Windows 7 mostrando el nombre del equipo.</i></p>
+		</center>
+		<ul>
+			<li>Tarjeta de red VBox en modo puente.</li>
+			<li>Instalar Cygwin con el servidor OpenSSH.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+			<b>NOTA 1:</b>
+			<ul type='square'>
+				<li>En el caso de trabajar con <b>WXP</b> podremos hacer la copia de seguridad en una carpeta c:\backup dentro del propio SO.</li>
+				<li>En el caso de <b>W7/W2008server</b>, parece que nos obliga a que la copia de seguridad se realice en un almacenamiento externo. Para ello podemos crear la carpeta c:\backup, y la definimos accesible por la red. Permisos de la carpeta compartida lectura/escritura y con usuario remoto. ¡OJO la carpeta compartida por red puede estar en la misma máquina!</li>
+				<li>Otra posibilidad sería la de añadir un 2º disco duro a la MV de <b>W7</b> a ver si deja realizar el backup en este 2º disco.</li>
+			</ul>
+		</div>
+		<br/>
+		<hr id='1.2' size='3px' noshade='noshade'/>
+		<a href='#1.1'><img src='./files/flecha2.png' width='20px'/></a> <a href='#1.1'>Principio del Punto 1.1</a> | <a href='#bloque1'><img src='./files/windows.png' width='20px'/></a> <a href='#bloque1'>Principio del Bloque 1</a> | <a href='#1.3'><img src='./files/flecha.png' width='20px'/></a> <a href='#1.3'>Fin del punto 1.2</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>	
+		<h3>1.2- Copia en entorno gráfico (GUI)</h3>
+		<ul>
+			<li>Con el ususario alumno1, crear dos archivos de texto: carta11.txt y carta12.txt</li>
+			<li>Crearemos los siguientes directorios;
+				<ul type='circle'>
+					<li><b>C:\backup\alumno1</b>, lo utilizaremos para almacenar las copias de seguridad que vayamos realizando de momento.</li>
+					<li><b>C:\restore\alumno1</b>, lo usaremos para las pruebas de restauración.</li>
+				</ul>
+			</li>
+			<li><b>Comprobar permisos:</b> las carpetas de backup (C:\backup\alumno1 y C:\restore\alumno1). Éstas deben tener todos los permisos para usuario "alumno1", y para el grupo "Admnistradores".</li>
+		</ul>
+		<center>
+			<img src='./files/w7GUI/permisobackupalumno1.png' valign='bottom' alt='Imagen 3: Control total del ususario "alumno1" de la carpeta backup.'/>
+			<img src='./files/w7GUI/permisobackupadministradores.png' valign='bottom' alt='Imagen 4: Control total del grupo "Administradores" de la carpeta backup.'/><br/>
+			<p><i><b>Imágenes 3 y 4:</b> Capturas de pantalla mostrando los permisos de la carpeta backup del grupo Administradores y del usuario alumno1.</i></p>
+		</center>
+		<ul>
+			<li><b>Copia de seguridad:</b> usar la herramienta de entorno gráfico que proporciona el sistema operativo <b>(Panel de control > Copias de seguridad y restauración)</b>. Realizar una copia de seguridad total, con el nombre "C:\backup\alumno1\copia-1-total.bkf". La copia contendrá el directorio del usuario alumno1 (C:\User\Alumno1).</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 2:</b>
+			<ul type='square'>
+				<li>En el caso de Windows 7 y Windows2008 Server la carpeta donde se va a ubicar la copia de seguridad debe ser un <b>recurso compartido de red (carpeta compartida)</b>.</li>
+				<li>Tanto en el caso de Windows 7 como Windows2008 Server no se permite renombrar la copia de seguridad, que recibe el nombre del equipo (<b>ORTEGA</b> en este caso).</li>
+			</ul>
+		</div><br/>
+		<center>
+			<img src='./files/w7GUI/ubicacionbackup.png' alt='Imagen 5: Selección de la carpeta compartida donde se ubicará la copia.'/><br/>
+			<p><i><b>Imagen 5:</b> Selección de la carpeta compartida donde se ubicará la copia.</i></p>
+			<img src='./files/w7GUI/elecciontipocopia.png' width='45%' valign='bottom' alt='Imagen 6: Selección del tipo de copia.'/>
+			<img src='./files/w7GUI/selecciondocumentosalumno1.png'  width='45%' alt='Imagen 7: Selección de los archivos.'/><br/>
+			<p><i><b>Imágenes 6 y 7:</b> Windows 7 permite seleccionar qué archivos se van a guardar en la copia de seguridad.</i></p>
+			<img src='./files/w7GUI/haciendo-copiaseguridad.png' width='45%' valign='bottom' alt='Imagen 8: Realziación de la copia.'/>
+			<img src='./files/w7GUI/ORTEGA.png'  width='45%' alt='Imagen 9: Copia total hecha.'/><br/>
+			<p><i><b>Imágenes 8 y 9:</b> Realización de la copia de seguridad y resultado de la misma.</i></p>	
+		</center>
+		<ul>
+			<li><b>Restaurar</b> la copia de seguridad total en <b>C:\restore\alumno1</b>.</li>
+		</ul>
+		<center>
+			<img src='./files/w7GUI/restorecopia1.png' width='45%' alt='Imagen 10: Selección de copia a restaurar.'/>
+			<img src='./files/w7GUI/ubicacionrestore.png' width='45%' alt='Imagen 11: Selección de la ubicación'/><br/>
+			<p><i><b>Imágenes 10 y 11:</b> Selección de la copia a restaurar y de la carpeta donde se realizará.</i></p>
+			<img src='./files//w7GUI/documentosrestore.png' width='55%' border='1px' alt='Imagen 12: Resultado de la restauración de la primera copia.'/><br/>
+			<p><i><b>Imagen 12:</b> Resultado de la restauración de la primera copia.</i></p>
+		</center>	
+		<ul>
+			<li><b>Realizaremos los siguientes cambios:</b> modificar el contenido del fichero carta11.txt.Eliminar el archivo carta12.txt, y crear un nuevo archivo carta13.txt.</li>
+			<li>Realizar una <b>copia de seguridad incremental</b> con el nombre C:\backup\alumno1\copia-2-incremental.bkf.</li>
+			<li>Comprobar el contenido de la copia incremental restaurando el contenido en C:\restore\alumno1.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 3:</b>
+			Tanto Windows 7 como Windows 2008 Server no permiten elegir el tipo de copia de seguridad a realizar (normal, incremental o diferencial), por lo que en este caso se realizó otra copia de seguridad total con los datos del alumno1. Posteriormente al intentar restaurar la copia se puede observar que la aplicación permite elegir entre las fechas de las diferentes copias realizadas a la hora de seleccionar qué archivos se recuperan.
+		</div><br/>
+		<center>
+			<img src='./files/w7GUI/w7copia2.png' width='55%' valign='bottom' alt='Imagen 13: Captura de pantalla de la segunda restauración de Windows 7.'/><br/>
+			<p><i><b>Imagen 13:</b> Captura de pantalla de la segunda restauración de Windows 7.</i></p>
+		</center>
+		<p>Como resultado de la segunda restauración de la copia de seguridad 2 ORTEGA se obtienen tanto el archivo eliminado carta12.txt, como el documento carta11.txt (modificado) y carta13.txt (nuevo).</p>
+		<ul>
+			<li><b>Restaurar</b> únicamente el fichero borrado (carta12.txt) desde la copia de seguridad a su lugar original.</li>
+		</ul>
+		<center>
+			<img src='./files/w7GUI/restaruarcarta12.png' valign='bottom' alt='Imagen 14: Selección de los archivos a restaurar de la copia de seguridad.'/><br/>
+			<p><i><b>Imagen 14:</b> Selección de los archivos a restaurar de la copia de seguridad.</i></p>
+			<img src='./files/w7GUI/carta12restaurada.png' width='51%' valign='bottom' alt='Imagen 15: carta12.txt restaurada.'/><br/>
+			<p><i><b>Imagen 15:</b> Archivo carta12.txt restaurado.</i></p>
+		</center>
+		<ul>
+			<li><b>Programar</b> una copia de seguridad del directorio personal de datos del usuario alumno1 (C:\Users\alumno1). A las 11:00 horas de lunes a viernes.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 4:</b>
+			Tanto Windows 7 como Windows2008 Server sólo permiten programar copias diarias, semanales o mensuales. No permiten establecer un rango de tiempo que se salga de estos intervalos. <b>Se escogió por lo tanto una programación semanal que se realizará todos los viernes a las 15:00.</b>
+		</div><br/>
+		<center>
+			<img src='./files/w7GUI/programacionsemanal.png' valign='bottom' alt='Imagen 16: Programación temporal de la copia de seguridad.'/><br/>
+			<p><i><b>Imagen 16:</b> Programación temporal de la copia de seguridad.</i></p>
+		</center>
+		<hr id='1.3' size='3px' noshade='noshade'/>
+		<a href='#1.2'><img src='./files/flecha2.png' width='20px'/></a> <a href='#1.2'>Principio del Punto 1.2</a> | <a href='#bloque1'><img src='./files/windows.png' width='20px'/></a> <a href='#bloque1'>Principio del Bloque 1</a> | <a href='#1.4'><img src='./files/flecha.png' width='20px'/></a> <a href='#1.4'>Fin del punto 1.3</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>	
+		<h3>1.3- Copia por comandos</h3>	
+		<ul>
+			<li>Con el usuario alumno2, crear dos archivos de texto: carta21.txt y carta22.txt. Usar el comando "attrib" para consultar los atributos asociados a estos ficheros. Capturar pantalla.</li>
+		</ul>	
+		<center>
+			<img src='./files/w7command/crearcarta21ycarta22yattrib.png' valign='bottom' alt='Imagen 17: Crear archivos y atributos.'/><br/>
+			<p><i><b>Imagen 17:</b> Documentos carta21.txt y carta22.txt creados. Se muestran sus atributos con el comando "attrib".</i></p>
+		</center>	
+		<ul>
+			<li>Crearemos los siguientes directorios;
+				<ul type='circle'>
+					<li><b>C:\backup\alumno2</b>, lo utilizaremos para almacenar las copias de seguridad que vayamos realizando de momento.</li>
+					<li><b>C:\restore\alumno2</b>, lo usaremos para las pruebas de restauración.</li>
+				</ul>
+			</li>
+			<li><b>Comprobar permisos:</b> las carpetas de backup (C:\backup\alumno2 y C:\restore\alumno2). Estas deben tener todos los permisos para usuario "alumno2", y para el grupo "Admnistradores".</li>
+		</ul>	
+		<center>
+			<img src='./files/w7command/crearcarpetasalumno2.png' valign='bottom' alt='Imagen 18: Creación de carpetas.'/><br/>
+			<p><i><b>Imagen 18:</b> Creación de las carpetas backup y restore.</i></p>
+			<img src='./files/w7command/permisoscomandoscarpetas.png' valign='bottom' alt='Imagen 19: Permisos.'/><br/>
+			<p><i><b>Imagen 19:</b> Se muestran los permisos de backup y restore. El alumno2 y el grupo administradores tienen control total (F).</i></p>
+		</center>	
+		<ul>
+			<li><b>Copia de seguridad</b>: realizar una copia de seguridad total, con el nombre "C:\backup\alumno2\copia-1-total.bkf". La copia contendrá el directorio del usuario alumno2 (C:\User\Alumno2).</li>
+		</ul>	
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 5:</b> A la hora de realizar por comandos la copia de seguridad en SO Windows se pueden optar por varios procedimientos:
+			<ul type='square'>
+				<li>Windows XP proporciona el comando <b>ntbackup</b> para hacer copias de seguridad. Veamos un ejemplo: <b>ntbackup backup "C:\Documents and Settings\alumno2" /F C:\backup\alumno2\backup.bkf /V:yes</b>. Esta opción no existe en Windows 7 y Windows 2008 Server.</li>
+				<li>Windows 7 y Windows 2008 Server proporciona el comando <b>wbadmin</b> para manejar copias de seguridad.</li>
+				<li>Otra posibilidad, usar los mismos comandos de GNU/Linux en Windows a través de la herramienta <b>Cygwin</b>.</li>
+			</ul>
+		</div><br/>
+		<h3>1.3.1.- Copia de seguridad mediante la utilización de "wbadmin"</h3>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 6:</b>
+			Para realizar la copia de seguridad se utilizó la expresión <b>"wbadmin start backup -backuptarget:\\ORTEGA\backup\alumno2 -include:C:\Users\alumno2 -user:alumno2 -password:78624791g"</b> de la cual se puede indicar lo siguiente:
+				<ul type='circle'>
+					<li><b>wbadmin start backup</b> -> comando que permite realizar la copia de seguridad.</li>
+					<li><b>Parámetros:</b>
+						<ul style=list-style:none;>
+							<li><b>-backuptarget:</b> debe ir seguido por el directorio donde va a guardarse la copia de seguridad que, como en el caso anterior por entorno gráfico, debe ser un recurso de red (carpeta compartida).</li>
+							<li><b>-include:</b> los directorios o unidades que van a incluirse en la copia de seguridad. En este caso sólo la carpeta personal de alumno2 (C:\Users\alumno2).</li>
+							<li><b>-user y -password:</b> para añadirle un usuario y contraseña de seguridad a la copia.</li>					
+						</ul>
+					</li>
+				</ul>
+		</div><br/>
+		<center>
+			<img src='./files/w7command/copiaseguridadparcial.png' valign='bottom' alt='Imagen 20: wbadmin parcial'/><br/>
+			<p><i><b>Imagen 20:</b> Intento de copia de seguridad mediante wbadmin.</i></p>
+		</center>		
+		<ul>
+			<li>Se comprueba que <b>en Windows 7 no está permitido realizar copias parciales</b> mediante la utilización del comando <b>wbadmin</b>.</li>
+			<li>Sí <b>es posible hacer copias de seguridad totales de una unidad al completo</b> (C, en este caso) mediante la utilización del comando <b>wbadmin</b>.</li>
+		</ul>	
+		<center>
+			<img src='./files/w7command/permitecopiatotal2.png' valign='bottom' alt='Imagen 21: wbadmin total'/><br/>
+			<p><i><b>Imagen 21:</b> Copia de seguridad total de la unidad C mediante wbadmin.</i></p>
+			<img src='./files/w7command/copiadeunidadcompletac.png' valign='bottom' alt='Imagen 22: copia total'/><br/>
+			<p><i><b>Imagen 22:</b> Ficheros y directorios generados por la copia de seguridad total de la unidad C mediante wbadmin.</i></p>
+		</center>		
+		<ul>
+			<li>Al intentar restaurar la copia de C realizada mediante el comando <b>wbadmin start systemstaterecovery</b> se comprueba que en Windows 7 no lo permite.</li>
+		</ul>	
+		<center>
+			<img src='./files/w7command/restore.png' valign='bottom' alt='Imagen 23: restore'/><br/>
+			<p><i><b>Imagen 23:</b> Intento de restauración mediante wbadmin start systemstaterecovery.</i></p>
+		</center><br/>	
+		<h3>1.3.2.- Copia de seguridad mediante la herramienta Cygwin</h3>	
+		<ul>
+			<li><b>Copia de seguridad:</b> usaremos comandos como tar y zip. Vamos realizar la copia de seguridad de la carpeta personal del usuario alumno2 (C:\Users\alumno2).</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 7:</b>
+			Para realizar la copia de seguridad se utilizó la expresión <b>"tar -jcvf /cygdrive/c/backup/alumno2/CopiaTotal_users-alumno2_21ene2014.tar.bz2 /cygdrive/c/users/alumno2"</b>. La explicación de ésta viene recogida en la <b>NOTA 14</b> del apartado <u>2.3.-Copia de seguridad por comandos en GNU/Linux</u>. 
+		</div><br/>
+		<center>
+			<img src='./files/w7command/cyw2.png' alt='Imagen 24a: tar1.'/><br/><br/>
+			<img src='./files/w7command/cyw4.png' alt='Imagen 24b: tar2.'/><br/>		
+			<p><i><b>Imagen 24:</b> Crear copia de seguridad con tar.</i></p>
+			<img src='./files/w7command/cyw5.png' alt='Imagen 25: tar3.'/><br/>		
+			<p><i><b>Imagen 25:</b> Archivo de copia de seguridad creado en C:\backup\alumno2.</i></p>			
+		</center>
+		<ul>
+			<li><b>Restaurar</b> la copia de seguridad en C:\restore\alumno2.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 8:</b>
+			Para restaurar la copia de seguridad se utilizó la expresión <b>"tar -jxvf /cygdrive/c/backup/alumno2/CopiaTotal_users-alumno2_21ene2014.tar.bz2"</b>. La explicación de ésta viene recogida en la <b>NOTA 15</b> del apartado <u>2.3.-Copia de seguridad por comandos en GNU/Linux</u>. 
+		</div><br/>
+		<center>
+			<img src='./files/w7command/cyw7.png' alt='Imagen 26a: restaurar1.'/><br/><br/>
+			<img src='./files/w7command/cyw8.png' alt='Imagen 26b: restaurar2.'/><br/>		
+			<p><i><b>Imagen 26:</b> Restaurar la copia de seguridad.</i></p>
+			<img src='./files/w7command/cyw9.png' alt='Imagen 27: restaurar3.'/><br/>		
+			<p><i><b>Imagen 27:</b> Copia de C:\Users\alumno2 restaurada con éxito en C:\restore\alumno2.</i></p>			
+		</center>
+		<ul>
+			<li><b>Realizaremos los siguientes cambios:</b> modificar el contenido del fichero carta21.txt. Eliminar el archivo carta22.txt, y crear un nuevo archivo carta23.txt.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 9:</b>
+			<ul type='square'>
+				<li>El fichero carta22.txt se eliminó utilizando el comando <b>rm</b>.</li>
+				<li>El fichero carta23.txt se creó usando el comando <b>touch</b>.</li>
+			</ul>
+		</div>
+		<br/>
+		<center>
+			<img src='./files/w7command/cyw12.png' alt='Imagen 28: modificaciones.'/><br/>		
+			<p><i><b>Imagen 28:</b> Realización de las modificaciones indicadas empleando rm y touch.</i></p>			
+		</center>
+		<ul>
+			<li><b>Restaurar</b> únicamente el archivo eliminado (carta22.txt) a partir de la copia de seguridad.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 10:</b>
+			Para restaurar el fichero carta22.txt que se eliminó, se utilizó la expresión <b>"tar -jxvf /cygdrive/c/backup/alumno2/CopiaTotal_users-alumno2_21ene2014.tar.bz2 cygdrive/c/Users/alumno2/Documents/carta22.txt"</b>. La explicación de ésta viene recogida en la <b>NOTA 17</b> del apartado <u>2.3.-Copia de seguridad por comandos en GNU/Linux</u>. 
+		</div><br/>
+		<center>
+			<img src='./files/w7command/cyw13.png' alt='Imagen 29: restaurar archivo.'/><br/>		
+			<p><i><b>Imagen 29:</b> Archivo carta22.txt eliminado, restaurado con éxito en C:\restore\alumno2.</i></p>			
+		</center>
+		<hr id='1.4' size='3px' noshade='noshade'/>
+		<a href='#1.3'><img src='./files/flecha2.png' width='20px'/></a> <a href='#1.3'>Principio del Punto 1.3</a> | <a href='#bloque1'><img src='./files/windows.png' width='20px'/></a> <a href='#bloque1'>Principio del Bloque 1</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>	
+		<h1><a id='bloque2'>2.- Sistema Operativo GNU/Linux</a></h1>
+		<h3 id='2.1'>2.1- Configurar el equipo con las siguientes características:</h3>
+		<ul>
+			<li><b>SO:</b> OpenSUSE 13.1</li>
+			<li><b>IP:</b> 172.16.108.2XX (donde XX corresponde al nº de cada puesto, 05 en este caso)</li>
+			<li><b>Máscara de red:</b> 255.255.0.0</li>
+			<li><b>Gateway:</b> 172.16.1.1</li>
+			<li><b>Servidor DNS:</b> 172.16.1.1</li>
+			<li><b>Nombre de equipo (host):</b> primer-apellido-del-alumno (ortega, en este caso)</li>
+		</ul>
+		<center>
+			<img src='./files/suseGUI/IPestatica.png' width='45%' alt='Imagen 30: Establecer IP estática.'/>
+			<img src='./files/suseGUI/nobredelequipo.png' width='45%' alt='Imagen 31: Nombre del host.'/><br/>
+			<p><i><b>Imágenes 30 y 31:</b> Captura de pantalla de Yast mostrando la configuración de la IP y el nombre del equipo.</i></p>
+			<img src='./files/suseGUI/Captura-de-pantalla.png' alt='Imagen 32: Gateway.'/><br/>
+			<p><i><b>Imagen 32:</b> Captura de pantalla de Yast mostrando la puerta de enlace predeterminada (gateway).</i></p>
+		</center>
+		<ul>
+			<li>Tarjeta de red VBox en modo puente.</li>
+			<li>Instalar Cygwin con el servidor OpenSSH.</li>
+		</ul>
+		<br/>
+		<hr id='2.2' size='3px' noshade='noshade'/>
+		<a href='#2.1'><img src='./files/flecha2.png' width='20px'/></a> <a href='#2.1'>Principio del Punto 2.1</a> | <a href='#bloque2'><img src='./files/opensuse.png' width='20px'/></a> <a href='#bloque2'>Principio del Bloque 2</a> | <a href='#2.3'><img src='./files/flecha.png' width='20px'/></a> <a href='#2.3'>Fin del punto 2.2</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>	
+		<h3>2.2- Copia en entorno gráfico (GUI)</h3>
+		<ul>
+			<li>Con el ususario profesor1, crear dos archivos de texto: manual11.txt y manual12.txt</li>
+			<li>Crearemos los siguientes directorios;
+				<ul type='circle'>
+					<li><b>/var/backup/profesor1</b>, lo utilizaremos para almacenar las copias de seguridad que vayamos realizando de momento.</li>
+					<li><b>/var/restore/profesor1</b>, lo usaremos para las pruebas de restauración.</li>
+				</ul>
+			</li>
+			<li><b>Comprobar permisos:</b> el usuario propietario será profesor1, y el grupo root. Todos los permisos para usuario y grupo. Ninguno para el resto.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+			<b>NOTA 11:</b>
+			<ul type='square'>
+				<li>Los directorios están creados desde el terminal usando el comando <b>mkdir</b>.</li>
+				<li>Se cambia el propietario de los directorios para que sea profesor1 usando el comando <b>chown</b>.</li>
+				<li>Se cambian los permisos de los directorios de tal manera que el usuario profesor1 y el grupo root tengan todos los permisos y ninguno el resto. Para ello se usa el comando <b>chmod</b>.</li>
+			</ul>
+		</div>
+		<br/>
+		<center>
+			<img src='./files/suseGUI/carpetaspermisosopensuse.png' alt='Imagen 33: Propietarios y permisos.'/><br/>
+			<p><i><b>Imagen 33:</b> Captura de pantalla que muestran los permisos de los directorios /var/backup/profesor1 y /var/restore/profesor1.</i></p>
+		</center>
+		<ul>
+			<li><b>Copia de seguridad:</b> para realizar la copia de seguridad se emplea la herramienta <b>Back in Time (backintime.le-web.org)</b>. Realizar la copia del home completo del usuario profesor1 (/home/profesor1).</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 12:</b>
+			<ul type='square'>
+				<li>Otros ejemplos de herramientas de backup:
+					<ul type='circle'>
+						<li>Areca Backup (www.areca-backup.org)</li>
+						<li>Amanda (www.amanda.org)</li>
+						<li>Bacula (www.bacula.org/en)</li>
+						<li>BackupPC (nackuppc.sourceforge.net/index.html)</li>
+						<li>Déjà Dup (mterry.name/deja-dup)</li>
+						<li>Duplicity (duplicity.nongnu.org)</li>
+						<li>Flyback (flyback-project.org)</li>
+						<li>luckyBackup (luckybackup.sourceforge.net)</li>
+						<li>Remastersys (www.remastersys.klikit-linux.com)</li>
+						<li>Rsync (rsync.samba.org)</li>
+						<li>Time Vault (launchpad.net/timevault)</li>
+					</ul>
+				</li>			
+			</ul>
+		</div>
+		<br/>
+		<center>
+			<img src='./files/suseGUI/ubicacioncopia.png' width='45%' alt='Imagen 34: Ubicacion copia seguridad.'/>
+			<img src='./files/suseGUI/carpetaincluir.png' width='45%' border='1px' alt='Imagen 35: Carpetas a copiar.'/><br/>		
+			<p><i><b>Imágenes 34 y 35:</b> Captura que muestra la ubicación de la copia de seguiridad (/var/backup/profesor1) y los directorios incluidos en la copia (/home/profesor1).</i></p>
+		</center>
+		<ul>
+			<li>Back in Time llama a las copias de seguridad <b>"Instantáneas"</b>.</li>
+		</ul>		
+		<center>		
+			<img src='./files/suseGUI/copia1hecha.png' width='55%' border='1px' alt='Imagen 36: Copia de seguridad hecha.'/><br/>		
+			<p><i><b>Imagen 36:</b> Copia de seguridad hecha a fecha del 13-01-2014.</i></p>
+			<img src='./files/suseGUI/copia1.png' width='55%' border='1px' alt='Imagen 37: Copia en el navegador.'/><br/>		
+			<p><i><b>Imagen 37:</b> Muestra de como se presenta la copia de seguridad en el navegador de archivos.</i></p>		
+		</center>
+		<ul>
+			<li><b>Restaurar </b> la copia de seguridad en /var/restore/profesor1.</li>
+		</ul>	
+		<center>		
+			<img src='./files/suseGUI/restore2.png' border='1px' alt='Imagen 38: Restaurar.'/><br/>		
+			<p><i><b>Imagen 38:</b> Restauración de la copia de seguridad.</i></p>
+			<img src='./files/suseGUI/restore3.png' width='49%' alt='Imagen 39: Copia restaurada en el navegador.'/><br/>		
+			<p><i><b>Imagen 39:</b> Copia restaurada en /var/restore/profesor1.</i></p>		
+		</center>
+		<ul>
+			<li><b>Realizaremos los siguientes cambios:</b> modificar el contenido del fichero carta11.txt.Eliminar el archivo carta12.txt, y crear un nuevo archivo carta13.txt.</li>
+			<li><b>Restaurar</b> únicamente el archivo eleminado a partir de la copia de seguridad.</li>
+		</ul>
+		<center>
+			<img src='./files/suseGUI/restorearchivo.png' width='45%' border='1px' alt='Imagen 40: Restaurar un único archivo.'/>
+			<img src='./files/suseGUI/restore6.png' width='45%' border='1px' alt='Imagen 41: Restaurar un único archivo.'/><br/>		
+			<p><i><b>Imágenes 40 y 41:</b> Proceso para restaurar carta12.txt eliminada previamente.</i></p>
+			<img src='./files/suseGUI/restore7.png' width='49%' border='1px' alt='Imagen 42: Carta12 restaurada.'/><br/>		
+			<p><i><b>Imagen 42:</b> Fichero carta12.txt restaurado.</i></p>
+		</center>
+		<ul>
+			<li><b>Programar</b> una copia de seguridad del home del usuario profesor1. A las 11:00 horas de lunes a viernes.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 13:</b>
+			Back in Time no permite programar copias con el intervalo de tiempo indicado en la práctica. <b>Se escogió por lo tanto una programación semanal que se realizará todos los viernes a las 15:00.</b>
+		</div><br/>
+		<center>
+			<img src='./files/suseGUI/programacion.png' border='1px' alt='Imagen 43: Programación semanal.'/><br/>		
+			<p><i><b>Imagen 43:</b> Programación semanal de la copia de seguridad.</i></p>
+		</center>
+		<br/>	
+		<hr id='2.3' size='3px' noshade='noshade'/>
+		<a href='#2.2'><img src='./files/flecha2.png' width='20px'/></a> <a href='#2.2'>Principio del Punto 2.2</a> | <a href='#bloque2'><img src='./files/opensuse.png' width='20px'/></a> <a href='#bloque2'>Principio del Bloque 2</a> | <a href='#2.4'><img src='./files/flecha.png' width='20px'/></a> <a href='#2.4'>Fin del punto 2.3</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>	
+		<h3>2.3- Copia por comandos</h3>	
+		<ul>
+			<li>Con el usuario profesor2, crear dos archivos de texto: manual21.txt y manual22.txt. Para ello se utiliza el comando <b>touch</b> como se muestra en la siguiente imagen.</li>
+		</ul>
+		<center>
+			<img src='./files/susecommand/creararchivos.png' alt='Imagen 44: Crear archivos.'/><br/>
+			<p><i><b>Imagen 44:</b> Crear los ficheros manual21.txt y manual22.txt.</i></p>
+		</center>
+		<ul>
+			<li>Crear los siguientes directorios:
+				<ul type='circle'>
+					<li><b>/var/backup/profesor2</b>, lo utilizaremos para almacenar las copias de seguridad que vayamos realizando de momento.</li>
+					<li><b>/var/restore/profesor2</b>, lo usaremos para las pruebas de restauración.</li>
+				</ul>
+			</li>
+			<li>Para crear las carpetas se utiliza el comando <b>mkdir</b> como se muestra en la imagen.</li>
+		</ul>
+		<center>
+			<img src='./files/susecommand/crearcarpetas.png' alt='Imagen 45: Crear cartpeta.'/><br/>
+			<p><i><b>Imagen 45:</b> Crear los directorios backup y restore.</i></p>
+		</center>
+		<ul>
+			<li><b>Comprobar permisos:</b> el usuario propietario será profesor2, y el grupo root. Todos los permisos para usuario y grupo. Ninguno para el resto. Para cambiar el usuario propietario de las carpetas se usa el comando <b>chwon</b> y para cambiar los permisos, el comando <b>chmod</b> como se muestra en las siguientes imágenes.</li>
+		</ul>
+		<center>
+			<img src='./files/susecommand/permisos.png' alt='Imagen 46: Propietario y permisos /var/backup/profesor2.'/><br/>
+			<p><i><b>Imagen 46:</b> Cambio de permisos y usuario propietario del directorio /var/backup/profesor2.</i></p>
+		</center>
+		<center>
+			<img src='./files/susecommand/permisos2.png' alt='Imagen 47: Propietario y permisos /var/restore/profesor2.'/><br/>
+			<p><i><b>Imagen 47:</b> Cambio de permisos y usuario propietario del directorio /var/restore/profesor2.</i></p>
+		</center>
+		<ul>
+			<li><b>Copia de seguridad:</b> usaremos comandos como tar y zip. Vamos realizar la copia de seguridad del home completo del usuario profesor2 (/home/profesor2).</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 14:</b>
+			Para realizar la copia de seguridad se utilizó la expresión <b>"tar -jcvf /var/backup/profesor2/CopiaTotal_home-profesor2_20ene2014.tar.bz2 /home/profesor2"</b> de la cual se puede indicar lo siguiente:
+				<ul type='circle'>
+					<li><b>tar</b> -> comando que permite crear un único archivo que contenga todos los datos seleccionados y además, permite comprimirlos en diferentes formatos y posteriormente descomprimir.</li>
+					<li><b>Parámetros:</b>
+						<ul style=list-style:none;>
+							<li><b>j:</b> comprimir usando compresión tipo bzip2.</li>
+							<li><b>c:</b> create, indica que se va a crear un archivo nuevo.</li>
+							<li><b>v:</b> verbose, elimina la barra inclinada (/) inicial de los archivos incluidos en el empaquetado.</li>
+							<li><b>f:</b> file, escribir hacia un archivo</li>						
+						</ul>
+					</li>
+					<li><b>/var/backup/profesor2/</b> -> dirección absoluta donde se va a ubicar la copia de seguridad.</li>
+					<li><b>CopiaTotal_home-profesor2_20ene2014.tar.bz2</b> -> nombre del archivo de la copia de seguridad. Este nombre incluye:
+						<ul style=list-style:none;>
+							<li><b>CopiaTotal</b> -> tipo de copia de seguridad realizada, en este caso, una copia total.</li>
+							<li><b>home-profesor2</b> -> los directorios incluidos en la copia de seguridad, en este caso /home/profesor2</li>
+							<li><b>20ene2014</b> -> fecha de realización de la copia de seguridad.</li>			
+						</ul>
+					</li>
+					<li><b>/home/profesor2</b> -> carpetas incluidas en la copia de seguridad, en este caso sólo /home/profesor2.</li>
+				</ul>
+		</div><br/>
+		<center>
+			<img src='./files/susecommand/tar1.png' alt='Imagen 48a: tar1.'/><br/><br/>
+			<img src='./files/susecommand/tar2.png' alt='Imagen 48b: tar2.'/><br/>		
+			<p><i><b>Imagen 48:</b> Crear copia de seguridad con tar.</i></p>
+			<img src='./files/susecommand/tar3.png' alt='Imagen 49: tar3.'/><br/>		
+			<p><i><b>Imagen 49:</b> Archivo de copia de seguridad creado en /var/backup/profesor2.</i></p>			
+		</center>
+		<ul>
+			<li><b>Restaurar</b> la copia de seguridad en /var/restore/profesor2.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 15:</b>
+			Para restaurar la copia de seguridad se utilizó la expresión <b>"tar -jxvf /var/backup/profesor2/CopiaTotal_home-profesor2_20ene2014.tar.bz2"</b> de la cual se puede indicar lo siguiente:
+				<ul type='circle'>
+					<li><b>tar</b> -> comando que permite crear un único archivo que contenga todos los datos seleccionados y además, permite comprimirlos en diferentes formatos y posteriormente descomprimir.</li>
+					<li><b>Parámetros:</b>
+						<ul style=list-style:none;>
+							<li><b>j:</b> indica que la compresión usada es tipo bzip2.</li>
+							<li><b>x:</b> extract, indica que se va a descomprimir un archivo.</li>
+							<li><b>v:</b> verbose.</li>
+							<li><b>f:</b> file, extraer desde un archivo.</li>						
+						</ul>
+					</li>
+					<li><b>/var/backup/profesor2/</b> -> dirección absoluta donde se ubica la copia de seguridad.</li>
+					<li><b>CopiaTotal_home-profesor2_20ene2014.tar.bz2</b> -> nombre del archivo de la copia de seguridad.</li>
+				</ul>
+		</div><br/>
+		<center>
+			<img src='./files/susecommand/restaurar1.png' alt='Imagen 50a: restaurar1.'/><br/><br/>
+			<img src='./files/susecommand/restaurar2.png' alt='Imagen 50b: restaurar2.'/><br/>		
+			<p><i><b>Imagen 50:</b> Restaurar la copia de seguridad.</i></p>
+			<img src='./files/susecommand/restaurar3.png' alt='Imagen 51: restaurar3.'/><br/>		
+			<p><i><b>Imagen 51:</b> Copia del /home/profesor2 restaurada con éxito en /var/restore/profesor2.</i></p>			
+		</center>
+		<ul>
+			<li><b>Realizaremos los siguientes cambios:</b> modificar el contenido del fichero manual21.txt. Eliminar el archivo manual22.txt, y crear un nuevo archivo manual23.txt.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 16:</b>
+			<ul type='square'>
+				<li>El fichero manual22.txt se eliminó utilizando el comando <b>rm</b>.</li>
+				<li>El fichero manual21.txt se modificó utilizando la herramienta <b>nano</b>.</li>
+				<li>El fichero manual23.txt se creó usando el comando <b>touch</b>.</li>
+			</ul>
+		</div>
+		<br/>
+		<center>
+			<img src='./files/susecommand/nano1.png' alt='Imagen 52: modificaciones.'/><br/>		
+			<p><i><b>Imagen 52:</b> Realización de las modificaciones indicadas empleando rm, touch y nano.</i></p>			
+		</center>
+		<ul>
+			<li><b>Restaurar</b> únicamente el archivo eliminado (manual22.txt) a partir de la copia de seguridad.</li>
+		</ul>
+		<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 17:</b>
+			Para restaurar el fichero manual22.txt que se elimnió se utilizó la expresión <b>"tar -jxvf /var/backup/profesor2/CopiaTotal_home-profesor2_20ene2014.tar.bz2 home/profesor2/manual22.txt"</b> de la cual se puede indicar lo siguiente:
+				<ul type='circle'>
+					<li><b>tar</b> -> comando que permite crear un único archivo que contenga todos los datos seleccionados y además, permite comprimirlos en diferentes formatos y posteriormente descomprimir.</li>
+					<li><b>Parámetros:</b>
+						<ul style=list-style:none;>
+							<li><b>j:</b> indica que la compresión usada es tipo bzip2.</li>
+							<li><b>x:</b> extraer, indica que se va a descomprimir un archivo.</li>
+							<li><b>v:</b> verbose.</li>
+							<li><b>f:</b> file, extraer desde un archivo.</li>						
+						</ul>
+					</li>
+					<li><b>/var/backup/profesor2/</b> -> dirección absoluta donde se ubica la copia de seguridad.</li>
+					<li><b>CopiaTotal_home-profesor2_20ene2014.tar.bz2</b> -> nombre del archivo de la copia de seguridad.</li>
+					<li><b>home/profesor2/manual22.txt</b> -> dirección dentro del archivo tar de la copia de seguridad donde se ubica manual22.txt</li>
+				</ul>
+		</div><br/>
+		<center>
+			<img src='./files/susecommand/restaurarunicoarchivo.png' alt='Imagen 53: restaurar archivo.'/><br/>		
+			<p><i><b>Imagen 53:</b> Archivo manual22.txt eliminado restaurado con éxito en /var/restore/profesor2/home/profesor2.</i></p>			
+		</center>
+		<hr id='2.4' size='3px' noshade='noshade'/>
+		<a href='#2.3'><img src='./files/flecha2.png' width='20px'/></a> <a href='#2.3'>Principio del Punto 2.3</a> | <a href='#bloque2'><img src='./files/opensuse.png' width='20px'/></a> <a href='#bloque2'>Principio del Bloque 2</a> | <a href='#bloque1'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#bloque1'>Principio</a>
+		<br/><br/>
+		<center>
+			<font size='2' color='grey'> Alejandro Ortega Freire 1ºASIR
+			<br/>
+			Implantación de Sistemas Operativos
+			</font>
+			<br/>
+			<img id='firma' src='./files/logoale.png' width='100px' alt='logo'/><br/>
+		</center>
+	</div>
+	</body>
+</html>
