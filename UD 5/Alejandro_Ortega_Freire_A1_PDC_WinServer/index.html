@@ -1,0 +1,486 @@
+<!--
+  AUTORES: Alejandro Ortega Freire
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 24/04/2014
+  ACTIVIDAD:  A1: PDC WinServer
+-->
+
+<html>
+	<head>
+		<title>A1: PDC WinServer</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	</head>
+	<body>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A1: PDC WinServer</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>24 de abril de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#indice'>1.- Introducción</a> | <a href='#2'>2- Configuración inicial</a> | <a href='#3'>3.- Controlador de dominio</a> | <a href='#4'>4.- Usuarios del dominio</a> | <a href='#5'>5.- Equipos del dominio</a> | <a href='#6'>6.- Perfiles móviles</a> | <a href='#7'>7.-Perfiles obligatorios</a> | <a href='#8'>8.- Control del tiempo</a>
+		</div>
+	<h1>1.- Introducción - PDC WinServer</h1>
+	<ul>
+		<li>En esta práctica vamos a montar un <b>PDC (Controlador Primario de Dominio)</b> con Servidor Windows 2008.</li>
+		<br/>
+		<li>Leer/consultar la documentación de la unidad y los <a href='http://www.ite.educacion.es/formacion/materiales/85/cd/windows/10Usuarios/index.html' target='_blank'>enlaces de interés( Usuarios y Grupos)</a></li>
+		<br/>
+		<li>Realizaremos las prácticas en MV's que pueden estar o no en el mismo PC.</li>
+		<br/>
+		<li>En VirtualBox, configuraremos inicialmente, las máquinas en modo de red "puente".</li>
+	</ul>
+	<br/>
+	<hr id='2' size='3px' noshade='noshade'/>
+	<a href='#indice'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#indice'>Principio del punto 1</a> | <a href='#3'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#3'>Fin del punto 2</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>2.- Configuración inicial</h1>
+	<h3 id='2.1'>2.1- Máquinas Virtuales</h3>
+	<ul>
+		<li>En esta práctica necesitaremos tres máquinas virtuales;</li><br/>
+		<ul type='square'>
+			<li><font color='red'><b>MV1 con SO Windows 2008 Server Enterprise</b></font> que tendrá dirección IP 172.16.108.111 y nombre <font color='red'><b>ORTEGA1</b></font>.</li>
+			<br/>
+			<li><font color='red'><b>MV2 con SO Windows 7</b></font> que tendrá dirección IP 172.16.108.211 y nombre <font color='red'><b>ORTEGA2A</b></font>.</li>
+			<br/>
+			<li><font color='red'><b>MV3 con SO Windows 7</b></font> que tendrá dirección IP 172.16.108.11 y nombre <font color='red'><b>ORTEGA2B</b></font>.</li>
+		</ul>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 1:</b> 
+		<ul>
+			<li>Las diferencias entre las distintas versiones de SO Windows: Standard, Professional, Enterprise, etc. son las funcionalidades/características que vienen activas o deshabilitadas.</li>
+			<li>Si trabajamos con Windows 2003 Server el disco duro en VirtualBox debe estar configurado con el controlador IDE, para evitar problemas con los drivers SATA.</li>
+		</ul>
+	</div>
+	<h3 id='2.2'>2.2- Contraseñas en WinServer</h3>
+	<ul>
+		<li>Necesitamos una MV con Windows 2008 Server Enterprise (MV1 - ORTEGA1).</li><br/>
+		<li>Recién instalado, WinServer es estricto con la política de seguridad, en cuanto a cómo deben definirse las claves (mayúsculas, minúsculas, números y caracteres especiales y longitud superior a 10). Se podría deshabilitar, pero reduciríamos la seguridad de las contraseñas. Un ejemplo de contraseñas segura: "obiwanKENOBI2014", que tiene 16 caracteres entre los que se incluyen mayúsculas, minúsculas y números.</li><br/>
+		<li>Para deshabilitar esta opción hay que dirigirse a las <b>Directivas de seguridad local -> Directivas de cuenta</b>, y deshabilitar los requisitos de complejidad de las contraseñas, como se muestra en las imágenes:</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/contrasena.png' width='55%' border='1'/><br/><br/>
+		<img src='./files/pdc/contrasena2.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imágenes 1 y 2:</b> Deshabilitar los requisitos de complejidad de las contraseñas (Windows 2008 Server).</i></p>			
+	</center>
+	<h3 id='2.3'>2.3- Configuración del Windows 2008 Server</h3>
+	<ul>
+		<li>Veamos imagen de configuración inicial de nuestra máquina:</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/confinicial.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 3:</b> Tareas de configuración inicial en Windows 2008 Server.</i></p>			
+	</center>	
+	<ul>
+		<li>Configuramos el nombre del equipo (host) poniendo <b>ortega1</b>.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/w20081.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 4:</b> Configuración del nombre del equipo en Windows 2008 Server.</i></p>			
+	</center>	
+	<ul>
+		<li>Configuramos el host con <b>DNS1 el propio Windows-Server (127.0.0.1)</b>, y <b>DNS2 el del centro (172.16.1.1)</b>.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/dns2008.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 5:</b> Configuración del DNS en ORTEGA1 (Windows 2008 Server).</i></p>			
+	</center>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 2:</b> 
+		<ul>
+			<li>Windows Server tiene una herramienta en <b>Inicio -> Administrar el Servidor</b>, que nos permite consultar la configuración del servidor, instalar/desinstalar paquetes/funciones/servicios, y acceder a los paneles de administración de los distintos servicios.</li>
+		</ul>
+		<center>
+			<img src='./files/pdc/admservidor.png' width='55%' border='1'/><br/><br/>
+			<img src='./files/pdc/admservidor2.png' width='75%' border='1'/><br/>		
+			<p><i><b>Imágenes 6 y 7:</b> Administrador del servidor en Windows 2008 Server.</i></p>			
+		</center>
+	</div>
+	<hr id='3' size='3px' noshade='noshade'/>
+	<a href='#2'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#2'>Principio del punto 2</a> | <a href='#4'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#4'>Fin del punto 3</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>3.- Controlador de dominio</h1>
+	<h3 id='3.1'>3.1- Definiciones</h3>
+	<ul>
+		<li>El <b>DA (Directorio Activo)</b> es una base de datos LDAP, que guarda la información de los objetos de nuestro dominio.</li><br/>
+		<li><b>Nombre de Dominio:</b> cada PDC se identifica con su nombre de dominio, el cuál debe ser único. Como nombre de dominio pondremos un nombre corto (6 letras del primer-apellido-del-alumno + 1W.IDP). 
+		En este caso el nombre de dominio, al ser ORTEGA el apellido del alumno, será <b>ORTEGA1W.IDP</b>.</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 3:</b> 
+		<ul>
+			<li><b>En realidad podríamos poner cualquier nombre</b>, pero lo haremos de esta forma para organizar mejor las distintas máquinas de la clase. Hay que evitar que el nombre de dominio se repita con la configuración de otro compañero..</li>
+			<li>Además <b>los nombres de dominio NO debe ser muy largos</b>. Preferiblemente menos de 10 letras, para evitar problemas con los clientes Windows anteriores a Vista/7/8.</li>
+		</ul>
+	</div>
+	<h3 id='3.2'>3.2- Instalación</h3>
+	<ul>
+		<li>Para <b>activar la función de controlador de dominios</b> podemos:</li>
+		<ul type='square'>
+			<li>Abrimos una consola (cmd) y ejecutar el comando <b>dcpromo</b>.</li>
+			<li>Ir a <b>Inicio -> Administrar el servidor -> Agregar funciones. (Servicio de Dominio de Directorrio Activo y el Servicio DNS)</b>.</li>
+		</ul>
+		<br/>
+		<li>Con cualquiera de las dos opciones se inicia el asistente de configuración de lo servicios del dominio de AD. A medida que se va instalando la función de controlador de dominios se solicitan una serie de parámetros que deben ser resueltos de la siguiente manera:</li>
+        <ul type='circle'>
+			<li>Modo experto => SÍ</li>
+        	<li>Crear un dominio nuevo de un bosque nuevo => SÍ</li>
+        	<li>FQDN del dominio => ORTEGA1W.IDP</li>
+        	<li>Nivel funcional del bosque => Windows Server 2008</li>
+        	<li>Servidor DNS => SÍ</li>
+        	<li>Carpetas de almacenamiento => Dejar valores por defecto.</li>
+		</ul>
+		<br/>
+        <li> A continuación se muestran la secuencia de imágenes que ilustran tales pasos:</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/AD0.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD1.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD3.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD4.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD5.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD6.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD7.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD8.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD9.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD10.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD11.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD12.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD13.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD14.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD15.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD16.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD17.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD18.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD19.png' width='45%' border='1'/>
+		<img src='./files/pdc/AD20.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/AD21.png' width='45%' border='1'/><br/>
+		<p><i><b>Imágenes 8 a 28:</b> Activar la función de controlador de dominios y servidor DNS en Windows 2008 Server.</i></p>			
+	</center>	
+	<ul>
+		<li>Al terminar reiniciar el sistema.</li><br/>
+		<li>Vemos imagen, donde podemos comprobar que se han instalado varias "funciones" para controlar el dominio:</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/funciones.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 29:</b> Nuevas funciones instaladas en Windows 2008 Server.</i></p>			
+	</center>	
+	<hr id='4' size='3px' noshade='noshade'/>
+	<a href='#3'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#3'>Principio del punto 3</a> | <a href='#5'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#5'>Fin del punto 4</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>4.- Usuarios del dominio</h1>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 4:</b> leer/consultar los apuntes para entender los conceptos: <b>usuario local, usuario del dominio, equipo del dominio, grupo local, grupo del dominio</b>.
+	</div>
+	<ul>
+		<li>Ir a <b>Inicio -> Herramientas Administrativas -> Usuarios y Equipos de Active Directory</b>.</li><br/>
+		<li>Crear el <b>grupo JEDI</b> con los siguientes <b>usuarios de dominio</b>: "yoda,", "obiwan" y "quigon". No confundir usuarios locales con usuarios del dominio.</li><br/>
+		<li>Crear el <b>grupo SITH</b> con los siguientes <b>usuarios de dominio</b>: "emperador", "vader" y "maul".</li><br/>
+		<li>Creación de los grupos JEDI y SITH:</li> 
+	</ul>
+	<center>
+		<img src='./files/pdc/grupos.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imagen 30:</b> Crear grupos.</i></p>
+		<img src='./files/pdc/creargrupos2.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 31:</b> Crear grupo JEDI.</i></p>
+		<img src='./files/pdc/creargrupos3.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 32:</b> Crear grupo SITH.</i></p>			
+	</center>
+	<ul>
+		<li>Ejemplo de usuario "quigon". La creación del resto de usuarios será análoga al procedimiento que se muestra a continuación:</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/usuarios.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imagen 33:</b> Crear usuarios.</i></p>
+		<img src='./files/pdc/quingon1.png' width='40%' border='1'/><br/><br/>				
+		<img src='./files/pdc/quingon2.png' width='40%' border='1'/><br/><br/>			
+		<img src='./files/pdc/quingon3.png' width='40%' border='1'/><br/>			
+		<p><i><b>Imágenes 34 a 36:</b> Crear usuario quigon.</i></p>			
+	</center>
+	<ul>
+		<li>Ejemplo de agregar el usuario "quigon" al grupo JEDI. Añadir el resto de usuarios a sus respectivos grupos se hará de forma análoga al procedimiento que se muestra a continuación:</li>  
+	</ul>
+	<center>
+		<img src='./files/pdc/agregarusuario.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imagen 37:</b> Añadir el usuario quigon al grupo JEDI.</i></p>	
+	</center>
+	<ul>
+		<li>Configuración final de los grupos:</li>  
+	</ul>
+	<center>
+		<img src='./files/pdc/grupojedi.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 38:</b> Usuarios del grupo JEDI.</i></p>
+		<img src='./files/pdc/gruposith.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 39:</b> Usuarios del grupo SITH.</i></p>
+	</center>
+	<ul>
+		<li>Vemos imagen final con los usuarios y grupos del dominio creados:</li>  
+	</ul>
+	<center>
+		<img src='./files/pdc/gusu.png' width='60%' border='1'/><br/>		
+		<p><i><b>Imagen 40:</b> Usuarios y grupos del dominio.</i></p>	
+	</center>
+	<hr id='5' size='3px' noshade='noshade'/>
+	<a href='#4'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#4'>Principio del punto 4</a> | <a href='#6'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#6'>Fin del punto 5</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>5.- Equipos del dominio</h1>
+	<h3 id='5.1'>5.1- Equipos clientes</h3>
+	<ul>
+		<li><b>Máquinas Virtuales CLIENTES:</b> necesitaremos 2 MV's con Windows 7 Enterprise, que actuarán de clientes o equipos del dominio.</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 5:</b> podemos crear una MV, y luego clonarla, modificando la MAC de la segunda MV, para no tener problemas de conectividad por tarjetas de red duplicadas.
+	</div>
+	<ul>
+		<li><b>Nombres NETBIOS:</b> cada cliente Windows 7 debe tener un <b>nombre NETBIOS sencillo</b>. Dado que el primer apellido del alumno es ORTEGA, usaremos el nombre <b>"ORTEGA2"</b>. Como tenemos 2 clientes usaremos <b>"ORTEGA2A"</b> para el primer cliente, <b>"ORTEGA2B"</b> para el segundo, y así sucesivamente. Cuando los equipos clientes se unan al dominio, además en el servidor PDC, veremos los nombres de equipos del dominio <b>"ORTEGA2A.ORTEGA1W.IDP"</b>, <b>"ORTEGA2B.ORTEGA1W.IDP"</b>, etc.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/w72a1.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 41:</b> Nombre NETBIOS de la máquina ORTEGA2A antes de unirse al dominio.</i></p>	
+		<img src='./files/pdc/nombre2b1.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 42:</b> Nombre NETBIOS de la máquina ORTEGA2B antes de unirse al dominio.</i></p>	
+	</center>
+	<ul>
+		<li><b>FECHA/HORA:</b> es muy importante que todos los equipos estén bien sincronizados en cuanto al reloj. No puede haber diferencias de más de 5 minutos.</li><br/>
+		<li><b>RED:</b> además el cliente debe tener como <b>DNS1 la IP del PDC</b>, y como <b>DNS2 a otro servidor DNS</b> (como por ejemplo a FRY 172.16.1.1).</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/dns2a.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 43:</b> Configuración del DNS en ORTEGA2A.</i></p>	
+		<img src='./files/pdc/dns2b.png' width='40%' border='1'/><br/>		
+		<p><i><b>Imagen 44:</b> Configuración del DNS en ORTEGA2B.</i></p>			
+	</center>
+	<h3 id='5.2'>5.2- Unir equipos al dominio</h3>
+	<ul>
+		<li>Ahora vamos a <b>unir el equipo cliente al dominio</b>. Ir a "Equipos (Botón derecho) -> Propiedades -> Cambiar configuración -> Cambiar -> Dominio (Escribir el nombre del dominio) -> Aceptar".</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/Imagen065a.png' width='65%' border='1'/><br/><br/>
+		<img src='./files/pdc/Imagen066a.png' width='65%' border='1'/><br/><br/>
+		<img src='./files/pdc/Imagen067a.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imágenes 45 a 47:</b> Unión del equipo ORTEGA2A al dominio ORTEGA1W.IDP.</i></p>	
+		<img src='./files/pdc/Imagen065b.png' width='65%' border='1'/><br/><br/>
+		<img src='./files/pdc/Imagen067b.png' width='65%' border='1'/><br/>				
+		<p><i><b>Imágenes 48 y 49:</b> Unión del equipo ORTEGA2B al dominio ORTEGA1W.IDP.</i></p>			
+	</center>
+	<ul>
+		<li>Si tuviéramos poblemas al realizar esta tarea de unión al dominio:</li> 
+		<ol>
+			<li>Vuelve a comprobar que todas las configuraciones son correctas.</li> 
+			<li>Repite el paso uno.</li>
+			<li>Configurar las másquinas servidor y cliente en la misma red interna de VirtualBox (consultar configuración de red de VirtualBox) y vuelve a intentarlo.</li>
+		</ol>
+	</ul>
+	<h3 id='5.3'>5.3- Comprobaciones</h3>
+	<ul>
+		<li>Comprobar que podemos entrar en los equipos <b>"ORTEGA2A"</b> y <b>"ORTEGA2B"</b> usando los usuarios del dominio.</li><br/>
+		<li>En las imágenes se muestran como ejemplos dos usuarios, "yoda" y "emperador", respectivamente, uno del grupo "jedi" y otro del grupo "sith", a modo de ejemplo. Se comprobó para el resto de usuarios definidos ("obiwan", "quigon", "maul" y "vader") se obtuvieron los mismos resultados.</li>
+	</ul>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 6:</b> Para entrar como usuario local en la máquina <b>ORTEGA2A</b> poner <b>"ORTEGA2A\alejandro"</b>. Esto es, <b>"nombre-de-máquina\nombre-usario-local"</b>.
+	</div>
+	<center>
+		<h3><u>USUARIO yoda</u></h3>
+		<img src='./files/pdc/yoda1.png' width='25%' border='1'/><br/><br/>
+		<img src='./files/pdc/yoda2a.png' width='65%' border='1'/><br/><br/>
+		<img src='./files/pdc/yoda2b.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imágenes 50 a 52:</b> Comprobación usuario <b>yoda</b>.</i></p>
+		<h3><u>USUARIO vader</u></h3>
+		<img src='./files/pdc/vader1.png' width='25%' border='1'/><br/><br/>
+		<img src='./files/pdc/vader2a.png' width='65%' border='1'/><br/><br/>
+		<img src='./files/pdc/vader2b.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imágenes 53 a 55:</b> Comprobación usuario <b>vader</b>.</i></p>		
+	</center>
+	<ul>
+		<li>Comprobar en el PDC que aparecen los equipos <b>"ORTEGA2A"</b> y <b>"ORTEGA2B"</b> como equipos del dominio.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/compro.png' width='45%' border='1'/><br/><br/>
+		<img src='./files/pdc/compro2.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imágenes 56 y 57:</b> Equipos del dominio ORTEGA1W.IDP.</i></p>
+	</center>
+	<ul>
+		<li>Comprobar que después de que los equipos clientes se hayan unido al dominio los nombres completos de los equipos de cambian a <b>"ORTEGA2A.ORTEGA1W.IDP"</b> y <b>"ORTEGA2B.ORTEGA1W.IDP"</b>.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/nombre2008.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 58:</b> ORTEGA1.</i></p>
+		<img src='./files/pdc/nombre2a.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 59:</b> ORTEGA2A.</i></p>
+		<img src='./files/pdc/nombre2b.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 60:</b> ORTEGA2B.</i></p>
+	</center>
+	<hr id='6' size='3px' noshade='noshade'/>
+	<a href='#5'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#5'>Principio del punto 5</a> | <a href='#7'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#7'>Fin del punto 6</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>6.- Perfiles móviles</h1>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 6:</b> leer/consultar los apuntes para entender los conceptos de <b>perfiles, perfil móvil y perfil obligatorio</b>. Tener en cuenta que la documentación está para W2k3Server y en W2k8Server hay algunos cambios.
+	</div>
+	<h3 id='6.1'>6.1- Perfiles de usuarios</h3>	
+	<ul>
+		<li>En el PDC, crear la carpeta <b>C:\perfiles$</b>, como compartida por red. Permisos lectura/escritura para todos los usuarios del dominio.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/perfiles1.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imagen 61:</b> Directorio Perfiles.</i></p>
+		<img src='./files/pdc/perfiles2.png' width='35%' border='1'/>	
+		<img src='./files/pdc/perfiles3.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imágenes 62 y 63:</b> Compartir carpeta y permisos a todos los usuarios del dominio.</i></p>
+	</center>
+	<ul>
+		<li>En el PDC, modificar el atributo "perfil" de los siguientes usuarios del dominio:</li>
+		<ul type='circle'>
+			<li><b>yoda:</b> \ORTEGA1\Perfiles$\%username%</li>
+			<li><b>obiwan:</b> \ORTEGA1\Perfiles$\%username%</li>
+			<li><b>quigon:</b> \ORTEGA1\Perfiles$\%username%</li>
+			<li><b>emperador:</b> \ORTEGA1\Perfiles$\sith</li>
+			<li><b>vader:</b> \ORTEGA1\Perfiles$\sith</li>
+			<li><b>maul:</b> \ORTEGA1\Perfiles$\sith</li>
+		</ul>
+	</ul>
+	<center>
+		<img src='./files/pdc/y.png' width='35%' border='1'/>	
+		<img src='./files/pdc/o.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imágenes 64 y 65:</b> Atributo perfil de los usuarios yoda y obiwan.</i></p>
+		<img src='./files/pdc/q.png' width='35%' border='1'/>	
+		<img src='./files/pdc/e.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imágenes 66 y 67:</b> Atributo perfil de los usuarios quigon y emperador.</i></p>
+		<img src='./files/pdc/v.png' width='35%' border='1'/>	
+		<img src='./files/pdc/m.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imágenes 68 y 69:</b> Atributo perfil de los usuarios vader y maul.</i></p>
+	</center>
+	<ul>
+		<li>Iniciar sesión en <b>"ORTEGA2A"</b> con los usuarios <b>yoda, obiwan, quigon y vader</b>. Para cada usuario modificar el entorno del escritorio, colores, iconos, crear alguna carpeta y/ fichero. De modo que el "perfil" de cada usuario sea diferente en aspecto.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/yodaa.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 70:</b> Cambios en el entorno del usuario yoda.</i></p>
+		<img src='./files/pdc/obiwan2a.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 71:</b> Cambios en el entorno del usuario obiwan.</i></p>
+		<img src='./files/pdc/quigon2a.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 72:</b> Cambios en el entorno del usuario quigon.</i></p>
+		<img src='./files/pdc/vadera.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 73:</b> Cambios en el entorno del usuario vader.</i></p>
+	</center>
+	<ul>
+		<li>Debemos comprobar que se han creado las <b>carpetas con los perfiles en el servidor</b>.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/carpetas.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imagen 74:</b> Carpertas de los perfiles en el servidor.</i></p>
+	</center>
+	<h3 id='6.2'>6.2- Limpiar el equipo cliente</h3>	
+	<ul>
+		<li>Iniciar sesión en <b>"ORTEGA2A"</b> con el usuario <b>"Administrador"</b> del dominio.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/adm.png' width='25%' border='1'/><br/>		
+		<p><i><b>Imagen 75:</b> Administrador del dominio ORTEGA1W.IDP.</i></p>
+	</center>
+	<ul>
+		<li>Ir a <b>Inicio -> Panel de Control -> Sistema -> Opciones Avanzadas -> Configuración de Perfiles de usuario</b>. Eliminar las copias de los perfiles móviles en el equipo cliente.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/perlimpio.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 76:</b> Eliminar las copias de los perfiles móviles en el equipo cliente.</i></p>
+	</center>
+	<ul>
+		<li>Ahora ya podemos entrar en los equipos <b>"ORTEGA2A"</b> y <b>"ORTEGA2B"</b>, con los usuarios del dominio, y comprobaremos que tenemos perfiles móviles para todos.</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 7:</b> el perfil móvil permite al usuario moverse por PC's diferentes y ver el mismo entorno con sus datos.
+	</div>
+	<ul>
+		<li>Comprobar que los perfiles personalizados para los usuarios <b>"yoda", "obiwan" y "quigon"</b> se mantienen entrando en la otra máquina cliente, <b>"ORTEGA2B"</b>.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/yodab.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 77:</b> Comprobación usuario yoda.</i></p>
+		<img src='./files/pdc/obiwan2b.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 78:</b> Comprobación usuario obiwan.</i></p>
+		<img src='./files/pdc/quigon2b.png' width='65%' border='1'/><br/>	
+		<p><i><b>Imagen 79:</b> Comprobación usuario quigon.</i></p>		
+	</center>
+	<ul>
+		<li>En este momento los usuarios <b>"emperador", "vader" y "maul"</b>, comparten la misma configuración.</li>
+	</ul>	
+	<hr id='7' size='3px' noshade='noshade'/>
+	<a href='#6'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#6'>Principio del punto 6</a> | <a href='#8'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#8'>Fin del punto 7</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>7.- Perfiles obligatorios</h1>	
+	Para convertir el perfil de todos los usuarios del grupo <b>"sith"</b> en obligatorio se siguieron los siguientes pasos:
+	<ul>
+		<li>Modificar el usuario propietario de la carpeta <b>sith.V2</b>, para que sea el usuario administrador del dominio (en este caso el usuario Administrador). Para ello hay que pulsar el botón derecho sobre la carpeta sith.V2 -> Seguridad -> Opciones Avanzadas -> Propietario.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/propietario1.png' width='55%' border='1'/><br/><br/>
+		<img src='./files/pdc/propietario2.png' width='55%' border='1'/><br/>		
+		<p><i><b>Imágenes 80 y 81:</b> Cambiar usuario propietario de sith.V2.</i></p>		
+	</center>
+	<ul>
+		<li>Una vez cambiado el propietario, modificar los permisos de la carpeta de tal manera que el usuario administrador del dominio (Administrador) tenga <b>Control Total</b> y los miembros del grupo "sith" tengan permisos de <b>Lectura</b>. De esta manera los usuarios "sith" no podrán modificar el perfil y cada vez que entren a un equipo tendrá el mismo entorno que se definió antes de modificar los permisos.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/permisos1.png' width='35%' border='1'/>
+		<img src='./files/pdc/permisos2.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imágenes 82 y 83:</b> Modificar los permisos de sith.V2.</i></p>		
+	</center>
+	<ul>
+		<li>Entrar en la carpeta sith.V2 y renombrar el archivo <b>NETUSER.DAT</b> por <b>NETUSER.MAN</b>. Una vez hecho esto el perfil móvil debería pasar a ser un perfil obligatorio.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/ntuserdat.png' width='60%' border='1'/><br/><br/>
+		<img src='./files/pdc/ntuserman.png' width='60%' border='1'/><br/>		
+		<p><i><b>Imágenes 82 y 83:</b> Renombrar NTUSER.DAT.</i></p>		
+	</center>
+	<ul>
+		<li>El problema surge ahora, pues después de haber hecho estos pasos y entrando en uno de los clientes con uno de los usuarios del grupo sith (vader) se comprobó que <b>no se convierte en un perfil obligatorio, sino que hay un problema y se almacena como un perfil temporal</b> que luego se acaba eliminando del equipo.</li>
+	</ul>
+	<center>
+		<img src='./files/pdc/temporal1.png' width='65%' border='1'/><br/>		
+		<p><i><b>Imagen 84:</b> El usuario vader inicia la sesión con un perfil temporal.</i></p>	
+		<img src='./files/pdc/temporal2.png' width='35%' border='1'/><br/>		
+		<p><i><b>Imagen 85:</b> Perfil temporal.</i></p>	
+	</center>
+	<ul>
+		<li>De momento el error persiste y se sigue investigando para descubrir como crear un perfil obligatorio.</li>
+	</ul>
+	<hr id='8' size='3px' noshade='noshade'/>
+	<a href='#7'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#7'>Principio del punto 7</a> | <a href='#9'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#9'>Fin del punto 8</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>		
+	<h1>8.- Control del tiempo</h1>	
+	<ul>
+		<li>Modificar los permisos de acceso de los usuarios del dominio, de la siguiente forma:</li>
+		<ul type='square'>
+			<li>Los "jedi" sólo pueden acceder de 08:00 a 14:00.</li>
+			<li>Los "sith" sólo pueden acceder de 14:00 a 20:00.</li>
+		</ul>
+		<br/>
+		<li>Para establecer estos límites temporales hay que, en el PDC, ir a <b>Usuarios y equipos de Active Directory -> Propiedades:usuario -> Cuenta -> Horas de inicio de sesión...</b>.</li><br/>
+		<li>Se muestran dos ejemplos de los usuarios <b>"yoda"</b> y <b>"emperador"</b>, miembros, respectivamente, de los grupos <b>"jedi"</b> y <b>"sith"</b>. Para el resto de usuarios el proceso será análogo.</li>
+	</ul>	
+	<center>
+		<img src='./files/pdc/yotime1.png' width='40%' border='1'/><br/><br/>				
+		<img src='./files/pdc/yotime2.png' width='50%' border='1'/><br/>		
+		<p><i><b>Imágenes 86 y 87:</b> Horario de acceso de yoda.</i></p>	
+		<img src='./files/pdc/emptime2.png' width='40%' border='1'/><br/><br/>				
+		<img src='./files/pdc/emptime1.png' width='50%' border='1'/><br/>		
+		<p><i><b>Imágenes 86 y 87:</b> Horario de acceso de emperador.</i></p>	
+	</center>
+	<hr id='9' size='3px' noshade='noshade'/>
+	<a href='#8'><img src='./files/flecha2.png' width='20px'/></a> <a href='#8'>Principio del punto 8</a> | <a href='#indice'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#indice'>Índice</a>
+	<br/><br/>	
+	<center>
+		<font size='2' color='grey'>Alejandro Ortega Freire 1ºASIR
+		<br/>
+		Implantación de Sistemas Operativos
+		</font>
+		<br/>
+		<img src='./files/logoale.png' width='100px' class='icon'/><br/>
+	</center>
+	</body>
+</html>
