@@ -1,0 +1,93 @@
+<html>
+<head>
+	<meta charset="UTF-8"/>
+	<title>Informe A7: Instalación desatendida</title>
+</head>
+<body>
+<div style='display:table-row; padding: 10px;'>
+  <div style='float: left; width=20%; padding:10px;'>
+  <img src='./files/logo.png'/>
+  </div>
+  <div style='float: left;padding:10px'>
+  <ul>
+    <li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+    <li><b>T&iacute;tulo del trabajo</b> <i>A7: Instalación desatendida</i></li>
+    <li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire y Efraín Hernández Morales</i></li>
+    <li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+    <li><b>Fecha de entrega:</b> <i>21 de Mayo de 2014</i></li>
+  </ul>
+  </div>
+</div>
+<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+<a href='#bloque1'>1. Instalar las fuentes de debian-installer</a> | <a href='#bloque2'>2. Instalar dependencias incumplidas de debian-installer</a> | <a href='#bloque3'>3. Personalizando el instalador</a> | <a href='#bloque4'>4. Generar la imagen</a> | <a href='#bloque5'>5. Creando nuestro preseed.cfg</a> | <a href='#bloque6'>6. Especificando una ruta para nuestro preseed.cfg</a> | <a href='#bloque7'>7. Modificando el initrd</a> | <a href='#bloque8'>8. Verificando la ISO</a> 
+</div>
+<h1><a id='bloque1'>1. Instalar las fuentes de debian-installer</a></h1>
+<ul>
+	<li>Primero, procedimos a proceder a instalar debian-installer, a través del siguiente comando: "apt-get source debian-installer". </li>
+	<br/><img src='./files/1.png'/><br/><br/>
+	<li>Como se muestra en la imagen, se ve que nos surge un error al instalar las fuentes de debian-installer y nos pide que verifiquemos si tenemos instalados "dpkg-dev". Nos tira un error, el cual creemos que es por problemas de los repositorios. Verificamos lo que tenemos:</li>
+	<br/><img src='./files/2.png'/><br/><br/>
+	<li>Finalmente, modificamos correctamente los repositorios y ya podemos obtener las fuentes de debian-installer. Las fuentes las movemos a una carpeta que creamos que se llama "proy".</li>
+	<br/><img src='./files/3.png'/><br/><br/>
+</ul>
+<h1><a id='bloque2'>2. Instalar dependencias incumplidas de debian-installer</a></h1>
+<ul>
+	<li>Para poder usar debian-installer sin conflictos, utilizamos el comando "dpkg-checkbuilddeps" en el directorio raíz de debian-installer. </li>
+	<br/><img src='./files/4.png'/><br/><br/>
+	<li>Al insertar ese comando, nos pedia instalar una serie de paquetes, por lo que procedemos a instalarlos para continuar con la práctica.</li>
+	<br/><img src='./files/5.png'/><br/><br/>
+	<li>Debido a que esta serie de paquetes ocupaba más de 1gb en el disco no teniamos el espacio requerido por lo que procedimos a crear una nueva máquina. Aprovechamos que ya estaban todos los paquetedes descargados, para utilizar el ssh y "pasarlos" a la nueva máquina y así no estar descargandolos nuevamente. </li>
+	<br/><img src='./files/6.png'/><br/><br/>
+	<li>Primero, comprimimos todos los paquetes del /apt/archives en .zip. </li>
+	<br/><img src='./files/7.png'/><br/><br/>
+	<li>Segundo, iniciamos el ssh y le "enviamos" los paquetes de forma comprimida a la nueva máquina. </li>
+	<br/><img src='./files/8.png'/><br/><br/>
+	<li>Seguidamente descomprimimos los paquetes en /apt/archives/ de la nueva máquina y procedemos a instalarlos. </li>
+	<br/><img src='./files/9.png'/><br/><br/><img src='./files/10.png'/><br/><br/><img src='./files/11.png'/><br/><br/>
+	<li>Lo que resta ahora es completar el paquete debian-installer con los udebs requeridos para cada imagen. Simplemente hay que poner el comando "dpkg-buildpackage" en el directorio raiz del instalador.</li>
+	<br/><img src='./files/12.png'/><br/><br/>
+</ul>
+<h1><a id='bloque3'>3. Personalizando el instalador</a></h1>
+<ul>
+	<li>Es posible adaptar la parte "externa" del instalador a nuestro gusto. Es decir, se pueden modificar las imágenes, colores, textos de ayuda, etc. Estos archivos están ubicados en build/boot/x86/. Por lo que procedemos a editar este archivo. </li>
+	<br/><img src='./files/13.png'/><br/><br/>
+	<li>Creímos oportuno editar el fondo de pantalla que se encuentra en el instalador modificando la siguiente línea:</li>
+	<br/><img src='./files/14.png'/><br/><br/><img src='./files/15.png'/><br/><br/>
+</ul>
+<h1><a id='bloque4'>4. Generar la imagen</a></h1>
+<ul>
+	<li>Una vez instaladas las dependencias y elegidos los repositorios deseados, lo que queda es generar la imagen. Para ello se debe tener en cuenta la arquitectura y el tipo. Para obtener una lista de todas las posibles combinaciones de arquitecturas y tipos, basta con utilizar el comando "make". </li>
+	<br/><img src='./files/16.png'/><br/><br/>
+	<li>Aunque por otro lado, si lo que se desea es que la imagen solo tenga el instalador, se puede crear una imagen mini-ISO con solo el netboot initrd en ella. Por ejemplo, el comando "make build_netboot" creará una imagen en build/dest/netboot/mini.iso, usando isolinux.</li>
+	<br/><img src='./files/17.png'/><br/><br/>
+</ul>
+<h1><a id='bloque5'>5. Creando nuestro preseed.cfg</a></h1>
+<ul>
+	<li>A pesar de que se puede generar un archivo preseed.cfg utilizando algunos comandos, es preferible crear uno desde el principio. De esta manera, la automatización de la instalación será totalmente personalizable. Empezaremos creando un archivo y llamándolo preseed.cfg. </li>
+	<br/><img src='./files/18.png'/><br/><br/>
+	<li>A continuación se añadieron cada uno de los parámetros que se pueden configurar como la localización, mapa del teclado, configuración de la red, Configuración de los repositorios, Configuración de reloj y zona horaria y Cargador de arranque.</li>
+	<br/><img src='./files/19.png'/><br/><br/><img src='./files/20.png'/><br/><br/><img src='./files/21.png'/><br/><br/>
+</ul>
+<h1><a id='bloque6'>6. Especificando una ruta para nuestro preseed.cfg</a></h1>
+<ul>
+	<li>Tendremos que editar el archivo de configuración ubicado en installer/build/config/common. En el ubicaremos la variable PRESEED y le especificaremos el directorio donde se encuentra nuestro archivo preseed.cfg. </li>
+	<br/><img src='./files/22.png'/><br/><br/>
+</ul>
+<h1><a id='bloque7'>7. Modificando el initrd</a></h1>
+<ul>
+	<li>Este mètodo es un poco mas complicado que el anterior. Dado que las imágenes ISO no se pueden modificar (directamente) una vez creadas, precisamos montarla en un directorio, y luego copiar su contenido a otro. Entonces, como root, ingresamos en la consola: . </li>
+	<br/><img src='./files/23.png'/><br/><br/><img src='./files/24.png'/><br/><br/>
+	<li>El paso siguiente es modificar el initrd. Para ello, ingresaremos la siguiente secuencia de comandos: </li>
+	<br/><img src='./files/25.png'/><br/><br/><img src='./files/26.png'/><br/><br/><img src='./files/27.png'/><br/><br/><img src='./files/28.png'/><br/><br/>
+	<li>Luego, para que el directorio cd/ quede listo para convertirse en una imagen ISO, tendremos que actualizar el md5sum.txt</li>
+	<br/><img src='./files/29.png'/><br/><br/>
+	<li>Lo que resta ahora es generar la imagen ISO, y que esta sea booteable. </li>
+	<br/><img src='./files/30.png'/><br/><br/><img src='./files/31.png'/><br/><br/><img src='./files/32.png'/><br/><br/>
+</ul>
+<h1><a id='bloque8'>8. Verificando la ISO</a></h1>
+<ul>
+	<li>Y definitivamente probamos la instalación de este debian "editado" por nosotros. </li>
+	<br/><img src='./files/33.png'/><br/><br/><img src='./files/34.png'/><br/><br/><img src='./files/35.png'/><br/><br/><img src='./files/36.png'/><br/><br/>
+</ul>
+</body>
+</html>
