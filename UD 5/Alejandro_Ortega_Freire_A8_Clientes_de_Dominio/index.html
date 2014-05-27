@@ -1,0 +1,241 @@
+<!--
+  AUTORES: Alejandro Ortega Freire
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 28/05/2014
+  ACTIVIDAD:  A8: Clientes de Dominio
+-->
+
+<html>
+	<head>
+		<title>A8: Clientes de Dominio</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	</head>
+	<body>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A8: Clientes de Dominio</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>28 de mayo de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#indice'>1.- Clientes de Dominio</a> | <a href='#1.1'>1.1- Introducción</a> | <a href='#1.2'>1.2- Máquinas Virtuales</a> | <a href='#1.3'>1.3- Lecturas</a> | <a href='#2'>2- Configurar clientes</a> | <a href='#2.1'>2.1- Consideraciones iniciales</a> | <a href='#2.2'>2.2- Configuración de red de los clientes</a> | <a href='#3'>3.- Unirse al dominio</a> | <a href='#4'>4.- Comprobaciones y capturas de imágenes</a> | <a href='#4.1'>4.1.- Acceso</a> | <a href='#4.2'>4.2.- Capturas de pantalla</a>
+		</div>
+	<h1>1.- Clientes de Dominio</h1>
+	<h3 id='1.1'>1.1- Introducción</h3>
+	<p>
+		El <b>objetivo de esta práctica</b> será el de configurar una MV Lubuntu, para comportarse como cliente de los dominios anteriores. Esto es, <b>la MV se unirá al PDC del Windows Server</b>.
+	</p>
+	<p>
+		Vamos a aprovechar el PDC de la actividad anterior, para realizar esta práctica. Además <b>usaremos la herramienta LikeWise</b>, que es un programa de entorno gráfico que nos ayudará a realizar la unión al dominio de forma sencilla.
+	</p>
+	<h3 id='1.2'>1.2- Máquinas Virtuales</h3>
+	<ul>
+		<li>Se empleará la misma MV que en anteriores prácticas (<b>A1: PDC WinServer</b>) como PDC (Controlador Primario de Dominio) y como cliente de dominio una MV con Lubuntu 14.04.Es decir:</li>
+			<ul type='square'>
+				<li><font color='red'><b>MV1 con SO Windows 2008 Server Enterprise</b></font> que tendrá dirección IP 172.16.108.111 y nombre <font color='red'><b>ORTEGA1</b></font>.</li>
+				<li><font color='red'><b>MV2 con Lubuntu 14.04</b></font> que tendrá dirección IP 172.16.108.11 y nombre <font color='red'><b>ORTEGA3C</b></font>.</li>
+			</ul>
+		<br/>
+		<li>La MV1 tendrá instalada la función de controlador del dominio <b>ORTEGA1W.IDP</b> y la MV2 será una <b>máquina cliente</b> desde la cual pueden acceder los diferentes usuarios del dominio.</li>
+		<br/>
+		<li>Los usuarios definidos en el dominio se dividen en dos grupos:</li>			
+			<ul type='square'>
+				<li><b>GRUPO JEDI:</b>"obiwan", "quigon" y "yoda".</li>
+				<li><b>GRUPO SITH:</b>"emperador", "maul" y "vader".</li>
+			</ul>
+	</ul>
+	<h3 id='1.3'>1.3- Lecturas</h3>
+	<ul>
+		<li><b>LECTURA:</b> para realizar esta tarea, consultar la documentación proporcionada por el profesor (dirac-01.pdf). En el PDF hay dos formas de hacerlo: </li>
+			<ul type='circle'>
+				<li>Usando comandos (Páginas 1-4).</li>
+				<li>Usando LikeWise (Páginas 4 y 5).</li>
+			</ul>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 1:</b> si se usa la distribución Ubuntu/Lubuntu como cliente para unirse al dominio de un Windows Server el proceso es más sencillo. Otra distribución GNU/Linux podría funcionar pero quizás la instalación del software LikeWise sería diferente o habría que usar los comandos.
+	</div>
+	<br/>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 2:</b> cada versión de Ubuntu tiene un nombre diferente. Veamos algunos:
+		<ul type='circle'>
+			<li>Versión 14.04, nombre Trusty Thar</li>
+			<li>Versión 13.10, nombre Saucy</li>
+			<li>Versión 13.04, nombre Raring Ringtail</li>
+			<li>etc.</li>
+		</ul>
+	</div>
+	<hr id='2' size='3px' noshade='noshade'/>
+	<a href='#indice'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#indice'>Principio del punto 1</a> | <a href='#3'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#3'>Fin del punto 2</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>2.- Configurar clientes</h1>
+	<h3 id='2.1'>2.1- Consideraciones iniciales</h3>
+	<ul>
+		<li>Tener en cuenta los siguientes aspectos en la configuración del cliente Lubuntu:</li>
+			<ul type='circle'>
+				<li><b>HORA:</b> la fecha/hora del sistema debe sincronizarse con el PDC. Si hiciera falta cambiar la zona horaria podemos usar el comando <b>"dpkg-reconfigure tzdata"</b>.</li>
+				<li><b>VIRTUALBOX:</b> GNU/Linux y PDC, deben estar en la misma red, por lo que es aconsejable configurar la red de las máquinas virtuales en <b>modo puente</b> las dos (el <b>modo red interna</b> también funcionará bien).</li>
+				<li><b>RED:</b> recordar que los serviores deben tener la configuración de <b>red estática</b>.</li>
+			</ul>
+	</ul>
+	<h3 id='2.2'>2.2- Configuración de red de los clientes</h3>
+	<ul>
+		<li>Poner a los clientes configuración de <b>red estática</b>.</li><br/>
+		<li>Los clientes, para unirse al PDC, deben tener como <b>DNS1=ip-del-pdc</b> y <b>DNS2=ip-de-fry</b>.</li><br/>
+		<li>Para configurar los DNS en una máquina Debian/Ubuntu, podemos hacer uso del propio fichero de configuración de red (<b>/etc/network/interfaces</b>).</li>
+	</ul>
+	<center>
+		<img src='./files/lu/001.png' border='1'/><br/><br/>			
+		<img src='./files/lu/002.png' border='1'/><br/><br/>		
+		<img src='./files/lu/003.png' border='1'/><br/>	
+		<p><i><b>Imágenes 1-3:</b> Configuración de red del cliente Lubuntu.</i></p>	
+	</center>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 3:</b> otra forma de configurar los servidores DNS en Debian, es editar el archivo /etc/resolv.conf, añadiendo lo siguiente:
+		<ul style="list-style-type: none;">
+			<li><b>search nombre-del-dominio-al-que-nos-vamos-a-unir</b></li>
+			<li><b>nameserver ip-de-fry</b></li>
+		</ul>
+	</div>
+	<ul>
+		<li>Para comprobar si la resolución de nombres (configuracion de los servidores DNS) está funcionando correctamente hacemos la siguiente prueba:</li>
+		<ul style="list-style-type: none;">
+			<li><b>nslookup www.iespuertodelacruz.es</b></li>
+		</ul>
+	</ul>
+	<center>
+		<img src='./files/lu/004.png' border='1'/><br/>	
+		<p><i><b>Imagen 4:</b> Comprobar que la configuración de los servidores DNS es correcta.</i></p>	
+	</center>
+	<hr id='3' size='3px' noshade='noshade'/>
+	<a href='#2'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#2'>Principio del punto 2</a> | <a href='#4'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#4'>Fin del punto 3</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>3.- Unirse al dominio</h1>	
+	<ul>
+		<li>Vamos a unir el cliente Lubuntu al PDC Windows Server usando una aplicación de entorno gráfico que nos ayuda en la unión de dominios, llamada <b>Likewise</b>.</li><br/>
+		<li>Enlaces de interés: <a title="ubuntu-likewise" target="_blank" href= "https://help.ubuntu.com/community/LikewiseOpen">"Ubuntu Likewise"</a>.</li><br/>
+		<li>Para instalar Likewise en Lubuntu hay varias formas:</li>
+		<ul type='circle'>
+			<li>Instalar los paquetes: <b>likewise-open y likewise-open-gui</b>.</li>
+			<li>Descargar el paquete/instalador desde la web de <a title="web" target="_blank" href="http://www.Likewise.com">Likewise</a>, para nuestra distro.</li>
+			<li>Descargar el código fuente, y realizar la instalación del programa (http://debian-base.blogspot.com.es/2014/01/installing-active-directory-client.html).</li>
+		</ul>		  
+	</ul>
+	<center>
+		<img src='./files/lu/005.png' border='1'/><br/>	
+		<p><i><b>Imagen 5:</b> Instalar los paquetes likewise-open y likewise-open-gui.</i></p>	
+	</center>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 4:</b> OJO una vez instalado el programa Likewise, puede ser que no tengamos creado el acceso directo al programa en los menús del entorno gráfico. Si queremos saber dónde está el programa podemos ejecutar el comando <b>"whereis domainjoin-gui"</b>.
+	</div>
+	<ul>
+		<li>Para ejecutar el programa, abrimos un terminal y ponemos: <b>domainjoin-gui</b></li><br/>
+		<li>Completamos la siguiente información de configuración:</li>
+			<ul type='circle'>
+				<li><b>Computer name:</b> dejar tal como está (<b>ORTEGA3C</b> en este caso)</li>
+				<li><b>Domain:</b> el dominio de nuestro PDC (<b>ORTEGA1W.IDP</b> en este caso)</li>
+			</ul>
+	</ul>
+	<center>
+		<img src='./files/lu/006.png' border='1'/><br/>	
+		<p><i><b>Imagen 6:</b> Unirse al dominio con likewise.</i></p>	
+	</center>	
+	<ul>
+		<li>Luego nos pedirá usuario y contraseña. Aquí ponemos el administrador del dominio y su contraseña.</li>
+	</ul>
+	<center>
+		<img src='./files/lu/007.png' border='1'/><br/>	
+		<p><i><b>Imagen 7:</b> Unirse al dominio con likewise.</i></p>	
+	</center>
+	<ul>
+		<li>Luego saldrá una pantalla como que es correcto y se pide reiniciar.</li>
+	</ul>
+	<center>
+		<img src='./files/lu/008.png' border='1'/><br/>
+		<p><i><b>Imagen 8:</b> Éxito al unir el equipo al dominio.</i></p>	
+	</center>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 5:</b> el administrador del domino en Windows es "Administrador", y en GNU/Linux es "root". Otra forma de unirnos al dominio es ejecutando el comando: <b>"domainjoin-cli join DOMINIO Administrador"</b>.
+	</div>
+	<br/>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 5:</b> si tenemos un error DNS a la hora de encontrar el servidor de dominio desde la máquina GNU/Linux, podemos incorporar la IP y el NOMBRE-DEL-DOMINIO al fichero <b>/etc/hosts</b> de cada máquina cliente. Esto lo hacemos para facilitar la búsqueda de la resolución de nombre e IP.
+	</div>
+	<ul>
+		<li>De esta forma el equipo ha quedado unido al dominio.</li>
+	</ul>
+	<center>
+		<img src='./files/lu/009.png' border='1'/><br/>
+		<p><i><b>Imagen 9:</b> Equipo unido correctamente al dominio.</i></p>	
+	</center>
+	<hr id='4' size='3px' noshade='noshade'/>
+	<a href='#3'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#3'>Principio del punto 3</a> | <a href='#5'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#5'>Fin del punto 4</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>4.- Comprobaciones y capturas de imágenes</h1>
+	<h3 id='4.1'>4.1- Acceso</h3>
+	<ul>
+		<li>Desde el cliente, entramos al sistema con algún usuario del dominio (<b>yoda</b>, por ejemplo).</li>
+	</ul>
+	<center>
+		<img src='./files/lu/010.png' border='1'/><br/>
+		<p><i><b>Imagen 10:</b> Acceder al sistema con el usuario yoda.</i></p>	
+	</center>
+	<h3 id='4.2'>4.2- Capturas de pantalla</h3>
+	<ul>
+		<li>Cuando nos unimos al dominio con Likewise (<b>"Domain join succeded"</b>).</li>
+	</ul>
+	<center>
+		<img src='./files/lu/008.png' border='1'/><br/>
+		<p><i><b>Imagen 11:</b> Éxito al unirse al dominio.</i></p>	
+	</center>
+	<ul>
+		<li>En el Windows Server debe parecer en la carpeta "Computers", del "Directorio Activo", nuestra máquina GNU/Linux.</li>
+	</ul>
+	<center>
+		<img src='./files/lu/011.png' border='1' width='750px'/><br/>
+		<p><i><b>Imagen 11:</b> Carpeta computers del AD donde aparece ORTEGA3C.</i></p>	
+	</center>
+	<ul>
+		<li>Entrar en GNU/Linux con un usuario del dominio (<b>yoda</b>, por ejemplo).</li>
+	</ul>
+	<center>
+		<img src='./files/lu/012.png' border='1'/><br/>
+		<p><i><b>Imagen 12:</b> Entrar con yoda en el sistema.</i></p>	
+	</center>
+	<ul>
+		<li>Abrir consola y poner el comando: <b>"cat /etc/passwd | grep nombre-usuario-login"</b>.</li>
+	</ul>
+	<center>
+		<img src='./files/lu/013.png' border='1'/><br/>
+		<p><i><b>Imagen 13:</b> Ejecutar el comando "cat /etc/passwd|grep yoda".</i></p>	
+	</center>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 6:</b> 
+		<ul>
+			<li>/etc/passwd es el archivo donde se guardan los usuarios del sistema. Cualquier usuario definido en el sistema aparece en él. Por ejemplo: el usuario <b>alejandro</b>.</li>
+			<br/>
+			<center>
+				<img src='./files/lu/014.png' border='1'/><br/>
+				<p><i><b>Imagen 14:</b> Ejecutar el comando "cat /etc/passwd|grep alejandro".</i></p>	
+			</center>
+			<li>Al ejecutar el comando <b>"cat /etc/passwd | grep yoda"</b> estamos pidiendo que se visualicen las líneas del fichero /etc/passwd donde aparezca "yoda". Como yoda es un usuario definido en el dominio y no en el equipo cliente, no aparece en el archivo /etc/passwd de la máquina virtual ORTEGA3C.</li>
+	</div>
+	<hr id='5' size='3px' noshade='noshade'/>
+	<a href='#4'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#4'>Principio del punto 4</a> | <a href='#indice'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#indice'>Índice</a>
+	<br/><br/>	
+	<center>
+		<font size='2' color='grey'>Alejandro Ortega Freire 1ºASIR
+		<br/>
+		Implantación de Sistemas Operativos
+		</font>
+		<br/>
+		<img src='./files/logoale.png' width='100px' class='icon'/><br/>
+	</center>
+	</body>
+</html>
