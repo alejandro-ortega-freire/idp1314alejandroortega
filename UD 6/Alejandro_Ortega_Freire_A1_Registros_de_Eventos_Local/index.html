@@ -1,0 +1,434 @@
+<!--
+  AUTORES: Alejandro Ortega Freire
+  ASIGNATURA: Implantación de Sistemas Operativos
+  CURSO: 1º ASIR 
+  FECHA: 11/06/2014
+  ACTIVIDAD:  A1: Registro de eventos local
+-->
+
+<html>
+	<head>
+		<title>A1: Registro de eventos local</title>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	</head>
+	<body>
+		<div id='indice' style='display:table-row; padding: 10px;'>
+			  <div style='float: left; width=20%; padding:10px;'>
+				<img src='./files/logo.png'/>
+			  </div>
+			  <div style='float: left;padding:10px'>
+				  <ul>
+					<li><b>M&oacute;dulo:</b> <i>Sistemas Operativos</i></li>
+					<li><b>T&iacute;tulo del trabajo:</b> <i>A1: Registro de eventos local</i></li>
+					<li><b>Componentes del grupo:</b> <i>Alejandro Ortega Freire</i></li>
+					<li><b>Curso Acad&eacute;mico:</b> <i>2013/2014</i></li>
+					<li><b>Fecha de entrega:</b> <i>11 de junio de 2014</i></li>
+				  </ul>
+			  </div>
+		</div>
+		<div style='float: clear;background-color: #eeeeee; border:2px solid; border-radius:10px; padding: 10px;'>
+			<a href='#indice'>1.- Introducción</a> | <a href='#2'>2.- Registro en Windows</a> | <a href='#3'>3.- Registro en GNU/Linux (Teoría)</a> | <a href='#3.1'>3.1- Monitorización</a> | <a href='#3.2'>3.2- Auditorías</a> | <a href='#4'>4.- Registro en GNU/Linux (GUI)</a> | <a href='#5'>5.- Registro en GNU/Linux (Comandos)</a> | <a href='#5.1'>5.1.- Configuración de Syslog</a> | <a href='#5.2'>5.2- Comprobar Rsyslog</a> | <a href='#6'>6.- Configuración de Logrotate</a> | <a href='#7'>7.- Anexo</a>
+		</div>
+	<h1>1.- Introducción</h1>
+	<ul>
+		<li>Toda la actividad importante del sistema debe quedar registrada en los ficheros de registro. Esto nos permite tener un histórico del comportamiento del sistema, que nos ayuda a modo de "caja negra" a reconstruir situaciones del pasado para diversos fines. Esta es la utilidad de la monitorización y la auditoría.</li>
+	</ul>
+	<hr id='2' size='3px' noshade='noshade'/>
+	<h1>2.- Registro en Windows</h1>
+	<p>Realizar las siguientes tareas en SO Windows:</p>
+	<ul>
+		<li>Debemos activar unas directivas de seguridad, para auditar los inicios de sesión al sistema (correctos e incorrectos). </li><br/>	
+		<li>Para activar las directivas de seguridad hay que dirigirse a <b>Panel de control -> Sistema y seguridad -> Herramientas asministrativas -> Directiva de seguridad local.</b> Incluir captura de pantalla con la directiva activada.</li>
+	</ul>
+	<center>
+		<img src='./files/img/001.png' width='750px' border='1'/><br/>		
+		<p><i><b>Imagen 1:</b> Directivas de seguridad local.</i></p>
+		<img src='./files/img/002.png' border='1'/><br/>		
+		<p><i><b>Imagen 2:</b> Activar auditorias de los inicios de sesión.</i></p>	
+		<img src='./files/img/003.png' width='750px' border='1'/><br/>		
+		<p><i><b>Imagen 3:</b> Activar auditorias de los inicios de sesión.</i></p>	
+	</center>
+	<ul>
+		<li>Poner como nombre NETBIOS de la máquina:</li>
+		<ul type='square'>
+			<li>"1er-apellido-del-alumno"+2 => Windows 7</li>
+			<li>"1er-apellido-del-alumno"+1 => Winodws 2008 Server</li>
+		</ul>
+	</ul>	
+	<center>
+		<img src='./files/img/004.png' width='900px'/><br/>		
+		<p><i><b>Imagen 4:</b> Establecer el nombre del equipo como ORTEGA2A.</i></p>
+	</center>
+	<ul>
+		<li>Reiniciar.</li><br/>	
+		<li>Crear los usuarios alu1, alu2 y alu3.</li>
+	</ul>	
+	<center>
+		<img src='./files/img/005.png' width='1000px'/><br/>		
+		<p><i><b>Imagen 5:</b> Crear los usuarios.</i></p>
+		<img src='./files/img/006.png' width='650px' border='1'/><br/>		
+		<p><i><b>Imagen 6:</b> Usuarios creados.</i></p>
+	</center>
+	<ul>
+		<li>Hacer las siguientes acciones:</li>
+		<ul type='square'>
+			<li>Entrar al sistema con alu1 de forma correcta.</li><br/>	
+			<center>
+				<img src='./files/img/007.png' width='750px'/><br/>		
+				<p><i><b>Imagen 7:</b> Entrar correctamente con alu1</i></p>
+			</center>
+			<li>Intentar entrar con alu2 poniendo la clave mal.</li><br/>	
+			<center>
+				<img src='./files/img/008.png'/><br/>		
+				<p><i><b>Imagen 8:</b> Intentar entrar incorrectamente con alu2</i></p>
+			</center>
+			<li>y no entrar con alu3.</li>
+		</ul><br/>
+		<li>Acceder al visor de eventos. <b>Panel de control -> Sistema y seguridad -> Herramientas asministrativas -> Visor de eventos.</b> Comprobar cómo se registran los eventos anteriores. Incluir captura de pantalla.</li>
+	</ul>	
+	<center>
+		<img src='./files/img/009.png' width='800px' border='1'/><br/>		
+		<p><i><b>Imagen 9:</b> Visor de eventos.</i></p>
+	</center>
+	<ul>
+		<li>Para comprobar el registro de los accesos al sistema correctos se hace un filtrado de todos los registros (<b>creando una vista personalizada</b>) indicando como opciones:</li>
+		<ul type='square'>
+			<li>Todos los niveles de evento.</li>	
+			<li>Intervalo: la última hora.</li>
+			<li>Por origen: Winlogon.</li><br/>	
+			<center>
+				<img src='./files/img/010.png' width='450px' border='1'/><br/>		
+				<p><i><b>Imagen 10:</b> Crear vista personalizada</i></p>
+			</center>
+		</ul><br/>	
+		<li>El filtro muestra cuatro registros en la última hora, correspondiente a los inicios y cierres de sesión correctos de alu1.</li>
+	</ul>	
+	<center>
+		<img src='./files/img/011.png' width='800px' border='1'/><br/>		
+		<p><i><b>Imagen 11:</b> Inicio de sesión correcto con alu1.</i></p>
+		<img src='./files/img/012.png' width='800px' border='1'/><br/>		
+		<p><i><b>Imagen 12:</b> Cierre de sesión correcto con alu1.</i></p>
+	</center>	
+	<ul>
+		<li>Para comprobar que se registró el intento de incio de sesión del usuario alu2 poniendo mal la clave, hay que situarse en el visor de eventos en la sección de <b>Auditorías Erróneas</b>.</li>
+	</ul>	
+	<center>
+		<img src='./files/img/013.png' width='800px' border='1'/><br/>		
+		<p><i><b>Imagen 13:</b> Error de auditoría.</i></p>
+	</center>
+	<ul>
+		<li>Exportar los eventos a ficheros CSV. Incluir fichero en la entrega con el nombre "registro-windows.csv".</li><br/>
+		<li>Se crean dos ficheros: <b>resgistro-windows-login_correctos.csv</b> que contiene los registros de los incios de sesión correctos; y <b>resgistro-windows-login_incorrectos.csv</b> que contiene el intento erróneo de inicio de sesión de alu2.</li><br/>	
+			<ul style=list-style:none;>
+				<li><a href='./files/resgistro-windows-login_correctos.csv'><img src='./files/documento.png' class='icon' width='25px'/></a> <a href='./files/resgistro-windows-login_correctos.csv'>resgistro-windows-login_correctos.csv</a></li><br/>	
+				<li><a href='./files/resgistro-windows-login_incorrectos.csv'><img src='./files/documento.png' class='icon' width='25px'/></a> <a href='./files/resgistro-windows-login_incorrectos.csv'>resgistro-windows-login_incorrectos.csv</a></li>
+			</ul>
+	</ul>
+	<br/>
+	<hr id='3' size='3px' noshade='noshade'/>
+	<a href='#2'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#2'>Principio del punto 2</a> | <a href='#4'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#4'>Fin del punto 3</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>3.- Registro en GNU/Linux (Teoría)</h1>
+	<h3 id='3.1'>3.1- Monitorización</h3>
+	<p>Configurar y recurrir a archivos de log.</p>
+	<ul>
+		  <li>Enlaces de interés: <a href="http://www.estrellateyarde.org/logs-en-linux" target="_blank" title="log-en-linux">logs en linux</a>.</li><br/>
+		  <li>Los archivos de log se guardan normalmente en <span style="font-weight: bold;">/var/log</span>, aunque cada programa puede usar uno propio.</li><br/>
+		  <li>El servicio de log lo controla <span style="font-weight: bold;">rsyslog</span> o syslog en versiones antiguas.</li><br/>
+		  <li>El fichero de configuración principal es <span style="font-weight: bold;">/etc/rsyslog.conf</span>, pero hay ficheros de configuración secundarios en /etc/rsyslog.d. Por ejemplo el fichero /etc/rsyslog.d/50-default.conf.<br /></li><br/>
+		  <li>Campos: selector (facility+priority) y acción. También llamado &quot;recurso.prioridad acción&quot;.<br /></li>
+			  <ul>
+				<li><span style="font-weight: bold;">Facility</span> identifica al origen del mensaje: auth, authpriv, cron, daemon, ftp, kern, lpr, mail, news, syslog, user, uucp, y local0 hasta local7.</li>
+				<li><span style="font-weight: bold;">Priority</span> idenfica la urgencia del mensaje: debug, info, notice, warning, err, crit, alert y emerg.</li>
+			  </ul>
+	</ul>
+	<p>Ejemplo de configuración dentro de rsyslog:</p>
+	<ul>
+		  <li><b>kern.* /var/log/kernel</b>: los eventos generados por el kernel, se guardarán en el fichero /var/log/kernel.</li><br/>
+		  <li><b>kern.crit @192.168.1.11</b>: los eventos críticos o de mayor prioridad, generados por el kernel se enviarán al PC con la IP especificada.</li><br/>
+		  <li><b>kern.crit /dev/console</b>: los eventos críticos o de mayor prioridad, generados por el kernel se mostrarán en el dispositivo consola.</li><br/>
+		  <li><b>kern.info;kern.!err /var/log/kernel-info</b>: los eventos generados por el kernel, de igual o mayor prioridad a info, pero NO los eventos de error o prioridad superior, se guardarán en el fichero /var/log/kernel-info.</li>
+	</ul>
+	<p>El comando <span style="font-weight: bold;">logger</span> permite crear un mensaje de log manualmente. La opción -p permite determinar el par &quot;facility-priority&quot;. Más información en <a target="_blank" href="http://www.estrellateyarde.org/so/logs-en-linux">http://www.estrellateyarde.org/so/logs-en-linux</a></p>
+	<h3 id='3.2'>3.2- Auditorías</h3>
+	<p>Veamos la utilidad de algunos ficheros de log del sistema:</p>
+	<ol>
+		  <li><strong>/var/log/messages</strong> – Contains global system messages, including the messages that are logged during system startup.</li><br/>
+		  <li><strong>/var/log/dmesg</strong> – Contains kernel ring buffer information. When the system boots up, it prints number of messages on the screen that displays information about the hardware devices that the kernel detects during boot process. You can also view the content of this file using the <a href="http://www.thegeekstuff.com/2010/10/dmesg-command-examples/" target="_blank">dmesg command</a>.<strong></strong></li><br/>
+		  <li><strong>/var/log/auth.log</strong> – Contains system authorization information, including user logins and authentication machinsm that were used.</li><br/>
+		  <li><strong>/var/log/boot.log</strong> – Contains information that are logged when the system boots</li><br/>
+		  <li><strong>/var/log/dpkg.log</strong> – Contains information that are logged when a package is installed or removed using <a href="http://www.thegeekstuff.com/2010/06/install-remove-deb-package/"target="_blank">dpkg command</a></li><br/>
+		  <li><strong>/var/log/lastlog</strong> – Displays the recent login information for all the users. This is not an ascii file. You should use lastlog command to view the content of this file.</li><br/>
+		  <li><strong>/var/log/user.log</strong> – Contains information about all user level logs</li><br/>
+		  <li><strong>/var/log/btmp</strong> – This file contains information about failed login attemps. Use the last command to view the btmp file. For example, “last -f /var/log/btmp | more”</li><br/>
+		  <li><strong>/var/log/wtmp</strong> or <strong>/var/log/utmp</strong> – Contains login records. Using wtmp you can find out who is logged into the system. who command uses this file to display the information.</li><br/>
+		  <li><strong>/var/log/faillog</strong> – Contains user failed login attemps. Use faillog command to display the content of this file.</li>
+	</ol>
+	<p>Además existen otras herramientas para auditar accesos a objetos del sistema de ficheros como &quot;<b>incron</b>&quot;.</p>
+	<hr id='4' size='3px' noshade='noshade'/>
+	<a href='#3'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#3'>Principio del punto 3</a> | <a href='#5'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#5'>Fin del punto 4</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>4.- Registro en GNU/Linux (GUI)</h1>
+	<ul>
+		<li>Se recomienda usar <b>GNU/Linux Debian</b>.</li><br/>
+		<li>Para cambiar el nombre de la máquina, hacemos: <b>hostname "1er-apellido-alumno"3"</b>.</li><br/>
+		<li>También es posible modificar el nombre de la máquina editando el archivo <b>/etc/hostname</b>.</li><br/>
+		<li>Usar el comando <b>hostname</b> para comprobar el nombre de la máquina.</li><br/>
+	</ul>
+	<center>
+		<img src='./files/img/014.png'/><br/><br/>			
+		<img src='./files/img/015.png'/><br/>		
+		<p><i><b>Imágenes 14-15:</b> Cambiar el nombre de la máquina Debian.</i></p>
+	</center>	
+	<ul>
+		<li>Instalar el programa <a href="http://www.webmin.com/" target="_blank" title="webmin">Webmin</a>. Para ello nos dirigimos a su página oficial, al apartado Downloads -> <a href="http://www.webmin.com/deb.html" target="_blank" title="webmin2">Installing on Debian</a>, y seguimos las instrucciones allí indicadas y que se detallan a continuación:</li><br/>
+		<ol>
+			<li>Descargar el paquete deb de la web de Webmin para instalarlo usamo dpkg. La última versión de Webmin es la 1.690 y el comando usado para bajar el paquete correspondiente es: <b>wget http://prdownloads.sourceforge.net/webadmin/webmin_1.690_all.deb</b></li><br/>
+			<center>
+				<img src='./files/img/016.png'/><br/>		
+				<p><i><b>Imagen 16:</b> Descargar paquete webmin_1.690_all.deb.</i></p>
+			</center>
+			<li>Instalar el paquete con el comando <b>dpkg --install webmin_1.690_all.deb</b>.</li><br/>
+			<center>
+				<img src='./files/img/017.png'/><br/>		
+				<p><i><b>Imagen 17:</b> Instalar Webmin</i></p>
+			</center>
+			<li>Al ejecutarlo hubo problemas de dependencias, pues faltaban algunos paquetes necesarios para el funcionamiento de Webmin. Se instalaron con el comando <b>apt-get install perl libnet-ssleay-perl openssl libauthen-pam-perl libpam-runtime libio-pty-perl apt-show-versions python</b>.</li><br/>
+			<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+			<b>NOTA 1:</b> si tenemos problemas de dependencias de paquetes, instalando el paquete deb, entonces ejecutamos el siguiente comando para resolverlas: <b>apt-get -f install</b>.
+			</div>
+			<br/>
+			<center>
+				<img src='./files/img/018.png'/><br/><br/>	
+				<img src='./files/img/019.png'/><br/><br/>
+				<img src='./files/img/020.png'/><br/>
+				<p><i><b>Imágenes 18-20:</b> Instalación de Webmin completa.</i></p>
+			</center>
+		</ol>
+		<li>Para iniciar el servicio Webmin, ejecutamos: <b>/etc/init.d/webmin start</b>.</li>
+	</ul>
+	<center>			
+		<img src='./files/img/021.png'/><br/>		
+		<p><i><b>Imagen 21:</b> Iniciar el servicio Webmin.</i></p>
+	</center>
+	<ul>
+		<li>Para acceder al programa Webmin, abrimos un navegador web y ponemos como URL <b>https://localhost:10000</b>.</li>
+	</ul>
+	<center>			
+		<img src='./files/img/022.png' width='750px' border='1'/><br/>		
+		<p><i><b>Imagen 22:</b> Acceder a Webmin.</i></p>			
+		<img src='./files/img/023.png' width='750px' border='1'/><br/>		
+		<p><i><b>Imagen 23:</b> Primer acceso a Webmin.</i></p>
+	</center>
+	<ul>
+		<li>Vamos a analizar los ficheros de log con la herramienta anterior. Para ello vamos a las opciones del menú <b>System -> System Log</b>. Incluir captura de pantalla.</li>
+	</ul>
+	<center>	
+		<img src='./files/img/024.png' width='800px' border='1'/><br/><br/>
+		<img src='./files/img/025.png' width='800px' border='1'/><br/>
+		<p><i><b>Imágenes 24-25:</b> Analizar ficheros de log en Webmin.</i></p>
+	</center>
+	<hr id='5' size='3px' noshade='noshade'/>
+	<a href='#4'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#4'>Principio del punto 4</a> | <a href='#6'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#6'>Fin del punto 5</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>5.- Registro en GNU/Linux (Comandos)</h1>
+	<ul>
+		<li>Vamos a realizar una monitorización local de nuestro equipo GNU/Linux, con rotación de log's.</li><br/>
+		<li>Se recomienda usar GNU/Linux Debian.</li>
+	</ul>
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 2:</b>
+		<ul>
+			<li>El fichero de configuración principal del servicio Syslog tiene el nombre <b>/etc/rsyslog.conf</b>.</li>
+			<li>En algunas distribuciones existe además el directorio /etc/rsyslog.d que contiene la configuración repartida en varios ficheros para hacerla más manejable. Pero funciona igual que el caso anterior.</li>
+			<li>El programa/demonio del servicio Syslog tiene el nombre /sbin/rsyslogd.</li>
+		</ul>
+	</div>
+	<h3 id='5.1'>5.1- Configuración de Syslog</h3>
+	<p>Realizar las siguientes tareas:</p>
+	<ul>
+		<li>Consultar el fichero <b>/etc/rsyslog.conf</b>.</li>
+	</ul>
+	<center>	
+		<img src='./files/img/026.png' border='1'/><br/><br/>	
+		<img src='./files/img/028.png' border='1'/><br/><br/>
+		<img src='./files/img/027.png' border='1'/><br/>
+		<p><i><b>Imágenes 26-28:</b> Fichero /etc/rsyslog.conf.</i></p>
+	</center>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 3:</b> vamos a añadir una nueva línea para configurar la grabación de nuestros eventos:
+		<ul>
+			<li>Como recurso.prioridad usaremos <b>local0.*</b>.</li>
+			<li>Como fichero de log usaremos <b>/var/log/nombrealumno/prueba-local.log</b>.</li>
+		</ul>
+	</div>	
+	<ul>
+		<li>Configurar la grabación de eventos. Seguir el siguiente proceso:</li>
+		<ul type='circle'>
+			<li>Crear la carpeta "/var/log/alejandro".</li>
+			<ul style=list-style:none;>
+				<li><b>mkdir /var/log/alejandro</b></li>
+			</ul>
+			<li>Con el usuario root, crear el fichero log de prueba "/var/log/alejandro/prueba-local.log" vacío.</li>
+			<ul style=list-style:none;>
+				<li><b>touch /var/log/alejandro/prueba-local.log</b></li>
+			</ul>
+			<li>Añadir la siguiente línea al fichero de configuracion /etc/rsyslog.conf.</li>
+			<ul style=list-style:none;>
+				<li><b>local0.* /var/log/nombredelalumno/prueba-local.log</b></li>
+			</ul>
+		</ul>
+	</ul>
+	<center>	
+		<img src='./files/img/029.png'/><br/><br/>	
+		<img src='./files/img/030.png'/><br/>
+		<p><i><b>Imágenes 29-30:</b> Configurar la grabación de eventos.</i></p>
+	</center>	
+	<ul>
+		<li>Ahora debemos reiniciar el servicio rsyslog, para que se recargue la nueva configuración.</li>
+		<ul type='circle'>
+			<li>/etc/init.d/rsyslog stop</li>
+			<li>/etc/init.d/rsyslog start</li>
+		</ul>
+	</ul>
+	<br/>
+	<center>	
+		<img src='./files/img/031.png'/><br/>
+		<p><i><b>Imagen 31:</b> Reiniciar el servicio rsyslog.</i></p>
+	</center>
+	<h3 id='5.2'>5.2- Comprobar Rsyslog</h3>		
+	<ul>
+		<li><b>cat /var/log/nombredelalumno/prueba-local.log</b>. Esto nos muestra que el fichero de log está vació por el momento.</li>
+	</ul>
+	<center>	
+		<img src='./files/img/032.png'/><br/>
+		<p><i><b>Imagen 32:</b> Fichero prueba-local.log vacío.</i></p>
+	</center>
+	<ul>
+		<li>Ahora vamos a usar el comando <b>logger</b> para generar mensajes de log en el fichero anterior. Por ejemplo: <b>logger -p local0.info "Hola Mundo"</b>.</li>
+		<br/>
+		<li>Usaremos para nuestros ejemplos el recurso "local0". Pero también se podrían usar local1, local2, local3, local4, local5, local6 y local7.</li>
+		<br/>
+		<li>Crear varios registros mediante el comando logger, usando varias prioridades diferentes y otros valores. Por ejemplo, probar los parámetros de logger -i, -t, etc.</li>
+	</ul>
+	<center>	
+		<img src='./files/img/033.png'/><br/>
+		<p><i><b>Imagen 33:</b> Generar mensajes de log con el comando logger.</i></p>
+	</center>
+	<ul>
+		<li>Ejecutando de nuevo <b>cat /var/log/nombredelalumno/prueba-local.log</b> se comprueba que el fichero de log ha dejado de estar vacío.</li>
+	</ul>
+	<center>
+		<img src='./files/img/034.png'/><br/>
+		<p><i><b>Imagen 34:</b> Contenido de prueba-local.log una vez creados los mensajes.</i></p>
+	</center>
+	<ul>
+		<li>Consultar los mensajes registrados, e indicar sobre un ejemplo el significado de cada campo de una línea concreta del log. Incluir captura de pantalla.</li>
+		<br/>
+		<li>Mensaje de prueba:<b> logger -p local0.notice -t TEST -f /etc/motd</b>. Registra el mensaje del fichero /etc/motd como local0.notice, poniéndole una etiqueta TEST. De esta expresión se puede indicar lo siguiente:</li> 
+		<ul type='circle'>
+			<li><b>logger</b> -> comando que genera el mensaje de log.</li>
+			<li><b>-p local0.notice</b> -> priority, permite añadir el mensaje con una prioridad específica. La prioridad se expresa de la forma "facility.level". En este caso "-p local0.notice" registra el mensaje como "noticia" en el recurso "local0".</li>
+			<li><b>-t TEST</b> -> tag, parámetro que añade una etiqueta al mensaje. En este caso la etiqueta es "TEST".</li>
+			<li><b>-f /etc/motd</b> -> file, añade el contenido del fichero "/etc/motd" como mensaje de log.</li>
+		</ul>
+	</ul>	
+	<div style='float: clear;background-color: #D7FABC; border:2px dotted; border-radius:10px; padding: 10px;'>
+		<b>NOTA 4:</b> el archivo /etc/motd incluye el mensaje del día (motd son las iniciales en inglés de message of the day) que se muestra al usuario cada vez que accede a su cuenta. La principal ventaja de este comando es que requiere menos recursos que, por ejemplo, enviar un correo a cada uno de los usuarios del sistema. En Debian 7 el motd por defecto es el que se muestra a continuación:
+		<br/><br/>
+	<center>
+		<img src='./files/img/035.png'/><br/>
+		<p><i><b>Imagen 35:</b> Contenido de /etc/motd.</i></p>
+	</center>
+	</div>
+	<br/>
+	<center>
+		<img src='./files/img/036.png'/><br/>
+		<p><i><b>Imagen 36:</b> Generar mensaje de log de prueba.</i></p>
+		<img src='./files/img/037.png'/><br/>
+		<p><i><b>Imagen 37:</b> Comprobar los cambios que se han producido en prueba-local.log.</i></p>
+	</center>
+	<hr id='6' size='3px' noshade='noshade'/>
+	<a href='#5'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#5'>Principio del punto 5</a> | <a href='#7'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#7'>Fin del punto 6</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>6.- Configuración de Logrotate</h1>
+	<ul>
+		<li>El programa <b>logrotate</b> permite hacer rotación de los ficheros de log.</li><br/>
+		<li>Fichero de configuración principal es <b>/etc/logrotate.conf</b>. Además existen ficheros de configuración auxiliares en /etc/logrotate.d.</li><br/>
+		<li>Ahora vamos a configurar logrotate para generar rotaciones de nuestro fichero de log. Para ello crearemos el fichero <b>/etc/logrotate.d/alejandro</b> con el siguiente contenido:</li>
+		<p>root@debian:~# more /etc/logrotate.d/alejandro<br/>
+		/var/log/alejandro/prueba-local.log /var/log/alejandro/prueba-local.*.log {<br/>
+		size = 1k<br/>
+		rotate 3<br/>
+		missingok<br/>
+		compress<br/>
+		notifempty<br/>
+		}</p>
+		<li>De la anterior expresión se puede indicar los siguiente:</li> 
+		<ul type='circle'>
+			<li><b>size=1k</b> -> tamaño máximo que puede tener el archivo de log a partir del cual se produce la rotación.</li>
+			<li><b>rotate 3</b> -> número de rotaciones que se guardan.</li>
+			<li><b>compress</b> -> las rotaciones se comprimen.</li>
+			<li><b>notifempty</b> -> avisa si la rotación está vacía.</li>
+		</ul>
+	</ul>
+	<center>
+		<img src='./files/img/038.png'/><br/><br/>
+		<img src='./files/img/039.png'/><br/>
+		<p><i><b>Imágenes 38-39:</b> Crear el fichero /etc/logrotate.d/alejandro para configurar la rotación de log.</i></p>
+	</center>
+	<ul>
+		<li>Vamos a generar muchos mensajes de log en el fichero de registro de eventos. Para ello podemos tomar varios caminos:</li><br/>
+		<ol>
+			<li>Podemos usar el script proporcionado por el profesor, cuya función es la de generar cientos de mensajes de log hacia el nuevo fichero de registro (esta es la opción escogida para generar los mensajes). Modo de uso:</li><br/>
+			<ul type='square'>
+				<li>Descargar fichero <a href='./files/send-messages.sh' target="_blank"><b>send-messages.sh</b></a>.</li>
+					<br/>
+					<center>
+						<img src='./files/img/040.png'/><br/>
+						<p><i><b>Imagen 40:</b> Contendio del script send-messages.sh.</i></p>
+					</center>
+				<li>Dar permisos de ejecución: <b>chmod +x send-messages.sh</b>.</li><br/>
+				<li>Ejecutar el script <b>./send-mesagges.sh</b>.</li>
+			</ul>
+			<br/>
+			<li>Podemos invocar el comando siguiente para aumentar el tamaño del registro de log con la información contenida en un fichero de texto: <b>logger -p local0.notice -t ETC-MOTD -f /etc/motd</b>.</li>
+		</ol>
+		<br/>
+		<li>Comprobar que el fichero de log ha crecido de tamaño.</li>
+	</ul>
+	<center>
+		<img src='./files/img/041.png'/><br/>
+		<p><i><b>Imagen 41:</b> Ejecución del script send-messages.sh.</i></p>
+	</center>
+	<ul>
+		<li>Para que se dispare la rotación de log (logrotate) automáticamente podemos reiniciar el equipo. Tras el reinicio de la máquina se observa como se ha producido la rotación como muestra la siguiente imagen:</li>
+	</ul>
+	<center>
+		<img src='./files/img/042.png'/><br/>
+		<p><i><b>Imagen 42:</b> Primera rotación de prueba-local.log.</i></p>
+	</center>
+	<ul>
+		<li>También es posible ejecutar manualmente el programa de rotación logrotate sin tener que reiniciar el equipo, de la siguiente forma <b>/usr/sbin/logrotate -f /etc/logrotate.conf</b>.</li><br/>
+		<li>Se ejecutó de nuevo el script send-messages.sh para generar nuevos mensajes y se ejecutó manualmente logrotate creando una segunda rotación como muestra la siguiente imagen:</li>
+	</ul>
+	<center>
+		<img src='./files/img/043.png'/><br/>
+		<p><i><b>Imagen 43:</b> Segunda rotación de prueba-local.log.</i></p>
+	</center>
+	<hr id='7' size='3px' noshade='noshade'/>
+	<a href='#6'><img src='./files/flecha2.png' class='icon' width='20px'/></a> <a href='#6'>Principio del punto 6</a> | <a href='#8'><img src='./files/flecha.png' class='icon' width='20px'/></a> <a href='#8'>Fin del punto 7</a> | <a href='#indice'><img src='./files/Icono_lupa.png' class='icon' width='20px'/></a> <a href='#indice'>Índice</a>	
+	<h1>7.- Anexo</h1>
+	<ul>
+		<li>El programa <b>Sentry</b> (<a href="http://sourceforge.net/projects/sentrytools" target="_blank" title="log-en-linux">http://sourceforge.net/projects/sentrytools</a>) sirve para revisar los logs del sistema.</li><br/>
+		<li>La herramienta <b>incron</b> de GNU/Linux, permite crear/activar auditorías de cualquier objeto del sistema de ficheros.</li>
+	</ul>
+	<hr id='8' size='3px' noshade='noshade'/>
+	<a href='#indice'><img src='./files/Icono_lupa.png' width='20px'/></a> <a href='#indice'>Índice</a>
+	<br/><br/>	
+	<center>
+		<font size='2' color='grey'>Alejandro Ortega Freire 1ºASIR
+		<br/>
+		Implantación de Sistemas Operativos
+		</font>
+		<br/>
+		<img src='./files/logoale.png' width='100px' class='icon'/><br/>
+	</center>
+	</body>
+</html>

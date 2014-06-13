@@ -1,0 +1,7 @@
+Nivel,Fecha y hora,Origen,Id. del evento,Categoría de la tarea
+Información,02/06/2014 9:32:40,Microsoft-Windows-Security-Auditing,4776,Validación de credenciales,"El equipo intentó validar las credenciales de una cuenta.
+
+Paquete de autenticación:	MICROSOFT_AUTHENTICATION_PACKAGE_V1_0
+Cuenta de inicio de sesión:	alu2
+Estación de trabajo de origen:	ORTEGA2A
+Código de error:	0xc000006a"
